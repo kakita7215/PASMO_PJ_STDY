@@ -2,18 +2,25 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ESP32 LCD Message</title>
+  <title>ESP32 LCD WebSocket</title>
 </head>
 <body>
-  <h2>ESP32 LCD メッセージ送信</h2>
+  <h2>ESP32 メッセージ送信</h2>
 
-  <input type="text" id="msg" size="30" placeholder="表示したい文字">
+  <input id="msg" size="30">
   <button onclick="send()">送信</button>
 
   <script>
-    function send() {
+    async function send() {
       const text = document.getElementById("msg").value;
-      fetch("http://10.16.19.91/send?text=" + encodeURIComponent(text));
+
+      await fetch("/api/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
+      });
+
+      alert("送信しました");
     }
   </script>
 </body>
