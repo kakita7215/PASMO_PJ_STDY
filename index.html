@@ -1,11 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<title>Hello from Tenma test</title>
+  <meta charset="UTF-8">
+  <title>ESP32 LCD Message</title>
 </head>
 <body>
-<h1>Hello from PASMO Test　 🎉</h1>
-<p>こんにちは</p>
+  <h2>ESP32 LCD メッセージ送信</h2>
+
+  <input type="text" id="msg" placeholder="表示したい文字" size="30">
+  <button onclick="send()">送信</button>
+
+  <script>
+    function send() {
+      const text = document.getElementById("msg").value;
+      fetch("/send?text=" + encodeURIComponent(text))
+        .then(() => alert("送信しました"));
+    }
+  </script>
 </body>
 </html>
