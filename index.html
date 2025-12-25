@@ -1,26 +1,23 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>ESP32 LCD WebSocket</title>
+  <meta charset="utf-8">
+  <title>ESP32 LCD Send</title>
 </head>
 <body>
-  <h2>ESP32 メッセージ送信</h2>
+  <h2>ESP32 LCD Text</h2>
 
-  <input id="msg" size="30">
+  <input id="text" type="text" placeholder="送信文字">
   <button onclick="send()">送信</button>
 
   <script>
-    async function send() {
-      const text = document.getElementById("msg").value;
+    const ws = new WebSocket("wss://pasmo-pj-stdy.onrender.com");
 
-      await fetch("/api/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
-
-      alert("送信しました");
+    function send() {
+      ws.send(JSON.stringify({
+        type: "text",
+        text: document.getElementById("text").value
+      }));
     }
   </script>
 </body>
