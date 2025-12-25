@@ -1,18 +1,50 @@
-const express = require("express");
-const http = require("http");
-const WebSocket = require("ws");
-const path = require("path");
+import express from "express";
+import http from "http";
+import { WebSocketServer } from "ws";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
-});
+// ES module 対応
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-/* WebSocket */
+app.use(express.static(path.join(__dirname, "/")));
+
+// WebSocket
 let espSocket = null;
 
 wss.on("connection", (ws) => {
-  ws.on("message", (msg) =>
+  console.log("WebSocket connected");
+
+  ws.on("message", (msg) => {
+    const data = JSON.parse(msg.toString());
+
+    // ESP32 登録
+    if (data.type === "esp32") {
+      espSocket = ws;
+      console.log("ESP32 registered");
+      return;
+    }
+
+    // HTML → ESP32 転送
+    if (data.type === "text" && espSocket) {
+      espSocket.send(JSON.stringify({
+        type: "text",
+        text: data.text
+      }));
+    }
+  });
+
+  ws.on("close", () => {
+    if (ws === espSocket) espSocket = null;
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
+});
