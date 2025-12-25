@@ -8,15 +8,15 @@ const PORT = process.env.PORT || 3000;
  
 const server = http.createServer((req, res) => {
 
-  let filePath = path.join(__dirname, 'index.html');
+  const filePath = path.join(__dirname, 'index.html');
  
   fs.readFile(filePath, (err, content) => {
 
     if (err) {
 
-      res.writeHead(500);
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
 
-      res.end('Error loading file');
+      res.end('Server Error');
 
     } else {
 
