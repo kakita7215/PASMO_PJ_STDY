@@ -1,6 +1,7 @@
 {
-  "name": "my-web",
+  "name": "railway-static-site",
   "version": "1.0.0",
+  "description": "Static site hosted with Express on Railway",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
