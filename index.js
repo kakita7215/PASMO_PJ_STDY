@@ -1,50 +1,51 @@
 import express from "express";
+import http from "http";
 import { WebSocketServer } from "ws";
 import path from "path";
 import { fileURLToPath } from "url";
 
+const app = express();
+const server = http.createServer(app);
+const wss = new WebSocketServer({ server });
+
+// ES module 対応
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
-app.use(express.json());
-
-/******** HTML配信 ********/
+// 🔴 これが無いと Cannot GET /
 app.use(express.static(path.join(__dirname, "public")));
 
-/******** HTTP + WS ********/
-const server = app.listen(3000, () => {
-  console.log("HTTP / WebSocket server running");
-});
+// WebSocket
+let espSocket = null;
 
-/******** WebSocket ********/
-const wss = new WebSocketServer({ server });
-const clients = new Set();
+wss.on("connection", (ws) => {
+  console.log("WebSocket connected");
 
-wss.on("connection", ws => {
-  console.log("ESP32 connected");
-  clients.add(ws);
+  ws.on("message", (msg) => {
+    const data = JSON.parse(msg.toString());
+
+    // ESP32 登録
+    if (data.type === "esp32") {
+      espSocket = ws;
+      console.log("ESP32 registered");
+      return;
+    }
+
+    // HTML → ESP32 転送
+    if (data.type === "text" && espSocket) {
+      espSocket.send(JSON.stringify({
+        type: "text",
+        text: data.text
+      }));
+    }
+  });
 
   ws.on("close", () => {
-    console.log("ESP32 disconnected");
-    clients.delete(ws);
+    if (ws === espSocket) espSocket = null;
   });
 });
 
-/******** HTML → Render ********/
-app.post("/api/send", (req, res) => {
-  const { text } = req.body;
-  if (!text) {
-    return res.status(400).json({ error: "text required" });
-  }
-
-  console.log("Send:", text);
-
-  for (const ws of clients) {
-    if (ws.readyState === ws.OPEN) {
-      ws.send(text);
-    }
-  }
-
-  res.json({ status: "sent" });
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on ${PORT}`);
 });
