@@ -1,10 +1,18 @@
 import express from "express";
 import { WebSocketServer } from "ws";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 
-/******** HTTP + WS 共通サーバ ********/
+/******** HTML配信 ********/
+app.use(express.static(path.join(__dirname, "public")));
+
+/******** HTTP + WS ********/
 const server = app.listen(3000, () => {
   console.log("HTTP / WebSocket server running");
 });
@@ -32,7 +40,6 @@ app.post("/api/send", (req, res) => {
 
   console.log("Send:", text);
 
-  // 接続中のESP32へ即Push
   for (const ws of clients) {
     if (ws.readyState === ws.OPEN) {
       ws.send(text);
