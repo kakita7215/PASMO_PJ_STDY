@@ -7,14 +7,13 @@
 <body>
   <h2>ESP32 LCD メッセージ送信</h2>
 
-  <input type="text" id="msg" placeholder="表示したい文字" size="30">
+  <input type="text" id="msg" size="30" placeholder="表示したい文字">
   <button onclick="send()">送信</button>
 
   <script>
     function send() {
       const text = document.getElementById("msg").value;
-      fetch("/send?text=" + encodeURIComponent(text))
-        .then(() => alert("送信しました"));
+      fetch("http://ESP32のIP/send?text=" + encodeURIComponent(text));
     }
   </script>
 </body>
