@@ -1,16 +1,9 @@
 {
-
-  "name": "pure-node-railway",
-
-  "version": "1.0.0",
-
+  "name": "esp32-ws",
+  "type": "module",
   "main": "index.js",
-
-  "scripts": {
-
-    "start": "node index.js"
-
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.16.0"
   }
-
 }
- 
