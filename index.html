@@ -2,26 +2,75 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>ESP32 LCD WebSocket</title>
+  <title>ESP32 LCD Scroll Sender</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    input {
+      width: 300px;
+      font-size: 16px;
+    }
+    button {
+      font-size: 16px;
+      margin-left: 10px;
+    }
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <h2>ESP32 メッセージ送信</h2>
 
-  <input id="msg" size="30">
-  <button onclick="send()">送信</button>
+  <h2>ESP32 LCD スクロール送信</h2>
+
+  <input type="text" id="textInput" placeholder="表示したい文字を入力">
+  <button onclick="sendText()">送信</button>
+
+  <div id="status">WS: 未接続</div>
 
   <script>
-    async function send() {
-      const text = document.getElementById("msg").value;
+    // ===== WebSocket 接続 =====
+    const ws = new WebSocket("wss://pasmo-pj-stdy.onrender.com/");
 
-      await fetch("/api/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
+    const statusEl = document.getElementById("status");
+    const inputEl = document.getElementById("textInput");
 
-      alert("送信しました");
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+      statusEl.textContent = "WS: 接続中";
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket closed");
+      statusEl.textContent = "WS: 切断";
+    };
+
+    ws.onerror = (e) => {
+      console.error("WebSocket error", e);
+      statusEl.textContent = "WS: エラー";
+    };
+
+    // ===== 送信 =====
+    function sendText() {
+      if (ws.readyState !== WebSocket.OPEN) {
+        alert("WebSocket が接続されていません");
+        return;
+      }
+
+      const text = inputEl.value;
+      if (!text) return;
+
+      ws.send(JSON.stringify({
+        type: "text",
+        text: text
+      }));
+
+      console.log("Send:", text);
     }
   </script>
+
 </body>
 </html>
