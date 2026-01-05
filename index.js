@@ -44,7 +44,7 @@ wss.on("connection", (ws) => {
       espSocket.send(
         JSON.stringify({
           type: "text",
-          text: data.text ,
+          text: data.text,
           speed:200
         })
       );
