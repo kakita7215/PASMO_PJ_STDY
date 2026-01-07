@@ -27,6 +27,7 @@
   <h2>ESP32 LCD スクロール送信</h2>
 
   <input type="text" id="textInput" placeholder="表示したい文字を入力">
+  <input type="number" id="speed" value="300" min="50" step="50">
   <button onclick="sendText()">送信</button>
 
   <div id="status">WS: 未接続</div>
@@ -37,6 +38,7 @@
 
     const statusEl = document.getElementById("status");
     const inputEl = document.getElementById("textInput");
+    const speedEl = parseInt(document.getElementById("speed").value, 10);
 
     ws.onopen = () => {
       console.log("WebSocket connected");
@@ -65,10 +67,11 @@
 
       ws.send(JSON.stringify({
         type: "text",
-        text: text
+        text: text ,
+        speed: speed
       }));
 
-      console.log("Send:", text);
+      console.log("Send:", text , "Speed:", speed);
     }
   </script>
 
