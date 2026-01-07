@@ -45,7 +45,7 @@ wss.on("connection", (ws) => {
         JSON.stringify({
           type: "text",
           text: data.text,
-          speed:parseInt(speed)
+          speed: parseInt(speed)
         })
       );
     }
