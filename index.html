@@ -38,7 +38,7 @@
 
     const statusEl = document.getElementById("status");
     const inputEl = document.getElementById("textInput");
-    const speedEl = parseInt(document.getElementById("speed").value, 10);
+    const speed = parseInt(document.getElementById("speed").value, 10);
 
     ws.onopen = () => {
       console.log("WebSocket connected");
