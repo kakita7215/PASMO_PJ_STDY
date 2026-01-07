@@ -68,7 +68,7 @@
       ws.send(JSON.stringify({
         type: "text",
         text: text ,
-        speed: speed
+        speed: Number(document.getElementById("speed").value)
       }));
 
       console.log("Send:", text , "Speed:", speed);
