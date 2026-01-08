@@ -8,5 +8,4 @@ function sendAlarm() {
     alarm: time,
     enable: enable
   }));
-  
 }
