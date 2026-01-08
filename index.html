@@ -1,37 +1,33 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <title>ESP32 Alarm</title>
 </head>
 <body>
+<h3>アラーム設定</h3>
 
-<h2>アラーム設定</h2>
-
-時：
-<input type="number" id="hour" min="0" max="23" value="7">
-分：
-<input type="number" id="minute" min="0" max="59" value="30">
-
+<input type="time" id="alarmTime">
 <label>
-  <input type="checkbox" id="enable"> アラームON
+  <input type="checkbox" id="alarmEnable"> アラーム有効
 </label>
-
-
 <button onclick="sendAlarm()">送信</button>
 
 <script>
 const ws = new WebSocket("wss://pasmo-pj-stdy.onrender.com/");
 
 function sendAlarm() {
+  const t = document.getElementById("alarmTime").value;
+  if (!t) return;
+  const [h, m] = t.split(":");
+
   ws.send(JSON.stringify({
     type: "alarm",
-    hour: parseInt(hour.value),
-    minute: parseInt(minute.value),
-    enable: enable.checked
+    hour: parseInt(h),
+    minute: parseInt(m),
+    enabled: document.getElementById("alarmEnable").checked
   }));
 }
 </script>
-
 </body>
 </html>
