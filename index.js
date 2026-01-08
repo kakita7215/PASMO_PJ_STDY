@@ -9,4 +9,9 @@ function sendAlarm() {
     alarm: time,
     enable: enable
   }));
+
+  if (data.type === "alarm" && espSocket) {
+    espSocket.send(JSON.stringify(data));
+  }
+  
 }
