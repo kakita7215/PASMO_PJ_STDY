@@ -5,6 +5,7 @@ function sendAlarm() {
   const time = document.getElementById("alarmTime").value;
   const enable = document.getElementById("alarmEnable").checked;
 
+
   ws.send(JSON.stringify({
     alarm: time,
     enable: enable
@@ -13,5 +14,5 @@ function sendAlarm() {
   if (data.type === "alarm" && espSocket) {
     espSocket.send(JSON.stringify(data));
   }
-  
+
 }
