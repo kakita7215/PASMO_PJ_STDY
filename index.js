@@ -1,8 +1,13 @@
-let ws=new WebSocket("ws://pasmo-pj-stdy.onrender.com/");
+function sendAlarm() {
+  const t = document.getElementById("alarmTime").value;
+  if (!t) return;
 
-function send(){
+  const [h, m] = t.split(":").map(Number);
+
   ws.send(JSON.stringify({
-    alarm: document.getElementById("alarmTime").value,
+    type: "alarm",
+    hour: h,
+    minute: m,
     enable: document.getElementById("alarmEnable").checked
   }));
 }
