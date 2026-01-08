@@ -1,0 +1,6 @@
+{
+  "type": "alarm",
+  "hour": 7,
+  "minute": 30,
+  "enable": true
+}
