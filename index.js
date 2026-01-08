@@ -1,11 +1,8 @@
-let ws = new WebSocket("ws://esp32.local/ws");
+let ws=new WebSocket("ws://pasmo-pj-stdy.onrender.com/");
 
-function sendAlarm() {
-  const time = document.getElementById("alarmTime").value;
-  const enable = document.getElementById("alarmEnable").checked;
-
+function send(){
   ws.send(JSON.stringify({
-    alarm: time,
-    enable: enable
+    alarm: document.getElementById("alarmTime").value,
+    enable: document.getElementById("alarmEnable").checked
   }));
 }
