@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>ESP32 Alarm</title>
+<title>ESP32 BTS Alarm</title>
 </head>
 <body>
 
@@ -15,6 +15,17 @@
 <br><br>
 <button onclick="sendAlarm()">送信</button>
 
-<script src="index.js"></script>
+
+<script>
+const ws = new WebSocket("wss://pasmo-pj-stdy.onrender.com/");
+function send(){
+  ws.send(JSON.stringify({
+    type:"alarm",
+    time:document.getElementById("alarmTime").value,
+    enable:document.getElementById("alarmEnable").checked
+  }));
+}
+</script>
+
 </body>
 </html>
