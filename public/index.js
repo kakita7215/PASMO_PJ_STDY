@@ -100,8 +100,20 @@ function sendAlarm() {
   };
   
   console.log("[WS] Sending:", alarmData);
-  ws.send(JSON.stringify(alarmData));
-  
+  ws.send(JSON.stringify({
+    type: "alarm",
+    hour: h,
+    minute: m,
+    enable: document.getElementById("alarmEnable").checked,
+
+    snooze: {
+      enable: document.getElementById("snoozeEnable").checked,
+      interval: Number(document.getElementById("snoozeInterval").value),
+      count: Number(document.getElementById("snoozeCount").value)
+    }
+  }));
+
+
   showStatus("送信中...", "info");
 }
 
