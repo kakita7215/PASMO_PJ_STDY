@@ -24,26 +24,6 @@ body.dark {
   --border: #374151;
 }
 
-
-.time-wrap {
-  position: relative;
-}
-
-.clock-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  font-size: 18px;
-}
-
-body.dark .clock-icon {
-  color: #f9fafb;
-}
-
-
-
 /* ========= レイアウト（既存崩さない） ========= */
 body {
   margin: 0;
@@ -149,12 +129,9 @@ function setTheme(mode) {
     <div class="status">✓ サーバーに接続中</div>
 
     <label>アラーム時刻</label>
-    <div class="time-wrap">
     <input type="time" id="alarmTime">
-    <span class="clock-icon">🕒</span>
-    
-    </div>
-    <div class="checkbox">
+
+    </div> <div class="checkbox">
       <label>
         <input type="checkbox" id="alarmEnable">
         アラームを有効にする
