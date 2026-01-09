@@ -1,5 +1,6 @@
 {
   "name": "esp32-alarm-server",
+  
   "version": "1.0.0",
   "description": "WebSocket server for ESP32 alarm control",
   "main": "index.js",
