@@ -23,6 +23,17 @@ body.dark {
   --accent: #22c55e;
   --border: #374151;
 }
+/* ===== ダークモード用 時計アイコン視認性改善 ===== */
+body.dark input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.2);
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+/* Firefox 対策（念のため） */
+body.dark input[type="time"] {
+  color-scheme: dark;
+}
 
 /* ========= レイアウト（既存崩さない） ========= */
 body {
