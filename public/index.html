@@ -140,17 +140,17 @@ function setTheme(mode) {
       </label>
     </div>
     <br>
-    <label class="checkbox">
-      <input type="checkbox" id="snoozeEnable">
-      スヌーズを有効にする
-    </label>
-    <br>
     <label>スヌーズ間隔（分）</label>
       <input type="number" id="snoozeInterval" min="1" max="60" value="5">
     <br>
     <label>スヌーズ回数</label>
       <input type="number" id="snoozeCount" min="1" max="10" value="3">
     <br>
+    <label class="checkbox">
+      <input type="checkbox" id="snoozeEnable">
+      スヌーズを有効にする
+    </label>
+
     <br>
     <button onclick="sendAlarm()">設定を送信</button>
   </div>
