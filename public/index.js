@@ -113,7 +113,6 @@ function sendAlarm() {
     }
   }));
 
-
   showStatus("送信中...", "info");
 }
 
