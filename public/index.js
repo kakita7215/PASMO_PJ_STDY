@@ -102,8 +102,8 @@ function sendAlarm() {
   console.log("[WS] Sending:", alarmData);
   ws.send(JSON.stringify({
     type: "alarm",
-    hour: h,
-    minute: m,
+    hour: hour,
+    minute: minute,
     enable: document.getElementById("alarmEnable").checked,
 
     snooze: {
