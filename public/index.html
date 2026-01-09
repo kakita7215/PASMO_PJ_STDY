@@ -23,17 +23,25 @@ body.dark {
   --accent: #22c55e;
   --border: #374151;
 }
-/* ===== ダークモード用 時計アイコン視認性改善 ===== */
-body.dark input[type="time"]::-webkit-calendar-picker-indicator {
-  filter: invert(1) brightness(1.2);
-  opacity: 0.9;
-  cursor: pointer;
+
+
+.time-wrap {
+  position: relative;
 }
 
-/* Firefox 対策（念のため） */
-body.dark input[type="time"] {
-  color-scheme: dark;
+.clock-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 18px;
 }
+
+body.dark .clock-icon {
+  color: #f9fafb;
+}
+
 
 
 /* ========= レイアウト（既存崩さない） ========= */
@@ -141,14 +149,17 @@ function setTheme(mode) {
     <div class="status">✓ サーバーに接続中</div>
 
     <label>アラーム時刻</label>
+    <div class="time-wrap">
     <input type="time" id="alarmTime">
-
+    <span class="clock-icon">🕒</span>
+    
+    </div>
     <div class="checkbox">
       <label>
         <input type="checkbox" id="alarmEnable">
         アラームを有効にする
       </label>
-    </div>
+    </div></div>
 
     <button onclick="sendAlarm()">設定を送信</button>
   </div>
