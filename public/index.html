@@ -80,6 +80,18 @@ input[type="time"] {
   /*font-weight: 600;*/
 }
 
+input[type="number"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-top: 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  box-sizing: border-box;
+}
+
 .checkbox {
   margin-top: 14px;
 }
@@ -153,6 +165,7 @@ function setTheme(mode) {
 
     <br>
     <button onclick="sendAlarm()">設定を送信</button>
+    <button onclick="stopAlarm()" style="background: #ef4444; margin-top: 10px;">アラームを停止</button>
   </div>
 
 </div>
