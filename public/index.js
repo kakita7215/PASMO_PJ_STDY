@@ -26,6 +26,12 @@ function connect() {
         } else {
           showStatus(`エラー: ${data.message}`, "error");
         }
+      } else if (data.type === "stop_ack") {
+        if (data.success) {
+          showStatus("アラームを停止しました", "success");
+        } else {
+          showStatus(`エラー: ${data.message}`, "error");
+        }
       }
     } catch (e) {
       console.error("[WS] Parse error:", e);
@@ -50,29 +56,44 @@ function connect() {
 }
 
 function updateConnectionStatus(connected) {
-  const statusEl = document.getElementById("connectionStatus");
-  const sendBtn = document.getElementById("sendBtn");
+  const statusEl = document.querySelector(".status");
   
   if (connected) {
     statusEl.textContent = "✓ サーバーに接続中";
-    statusEl.className = "connection-status connected";
-    sendBtn.disabled = false;
+    statusEl.style.background = "#dcfce7";
+    statusEl.style.color = "#166534";
   } else {
     statusEl.textContent = "✗ サーバーに未接続";
-    statusEl.className = "connection-status disconnected";
-    sendBtn.disabled = true;
+    statusEl.style.background = "#fee2e2";
+    statusEl.style.color = "#991b1b";
   }
 }
 
 function showStatus(message, type) {
-  const statusEl = document.getElementById("status");
-  statusEl.textContent = message;
-  statusEl.className = `status ${type}`;
-  statusEl.style.display = "block";
+  const statusEl = document.querySelector(".status");
+  const originalBg = statusEl.style.background;
+  const originalColor = statusEl.style.color;
+  const originalText = statusEl.textContent;
   
-  // 3秒後に非表示
+  // ステータスを一時的に変更
+  if (type === "success") {
+    statusEl.style.background = "#dcfce7";
+    statusEl.style.color = "#166534";
+  } else if (type === "error") {
+    statusEl.style.background = "#fee2e2";
+    statusEl.style.color = "#991b1b";
+  } else {
+    statusEl.style.background = "#dbeafe";
+    statusEl.style.color = "#1e40af";
+  }
+  
+  statusEl.textContent = message;
+  
+  // 3秒後に元に戻す
   setTimeout(() => {
-    statusEl.style.display = "none";
+    statusEl.style.background = originalBg;
+    statusEl.style.color = originalColor;
+    statusEl.textContent = originalText;
   }, 3000);
 }
 
@@ -92,20 +113,12 @@ function sendAlarm() {
   
   const [hour, minute] = timeInput.value.split(":").map(Number);
   
-  const alarmData = {
-    type: "alarm",
-    hour: hour,
-    minute: minute,
-    enable: enableCheckbox.checked
-  };
-  
-  console.log("[WS] Sending:", alarmData);
+  console.log("[WS] Sending alarm settings");
   ws.send(JSON.stringify({
     type: "alarm",
     hour: hour,
     minute: minute,
     enable: document.getElementById("alarmEnable").checked,
-
     snooze: {
       enable: document.getElementById("snoozeEnable").checked,
       interval: Number(document.getElementById("snoozeInterval").value),
@@ -114,6 +127,20 @@ function sendAlarm() {
   }));
 
   showStatus("送信中...", "info");
+}
+
+function stopAlarm() {
+  if (ws.readyState !== WebSocket.OPEN) {
+    showStatus("サーバーに接続されていません", "error");
+    return;
+  }
+  
+  console.log("[WS] Sending stop command");
+  ws.send(JSON.stringify({
+    type: "stop"
+  }));
+  
+  showStatus("停止コマンドを送信中...", "info");
 }
 
 // ページ読み込み時に接続
