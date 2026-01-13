@@ -34,18 +34,25 @@ function connect() {
         }
       } else if (data.type === "alarm_status") {
         // 次回アラーム時刻を更新
+        console.log("[Status] Updating next alarm display:", data.nextAlarm);
         const nextAlarmEl = document.getElementById("nextAlarmTime");
         if (nextAlarmEl) {
           nextAlarmEl.textContent = data.nextAlarm || "--:--";
+          console.log("[Status] Display updated to:", nextAlarmEl.textContent);
           
           if (data.status === "snooze") {
             nextAlarmEl.style.color = "#f59e0b"; // オレンジ（スヌーズ中）
+            console.log("[Status] Color set to orange (snooze)");
           } else if (data.status === "stopped") {
             nextAlarmEl.style.color = "var(--subtext)";
             nextAlarmEl.textContent = "--:--";
+            console.log("[Status] Color set to gray (stopped)");
           } else {
             nextAlarmEl.style.color = "var(--text)";
+            console.log("[Status] Color set to default (set)");
           }
+        } else {
+          console.error("[Status] Element 'nextAlarmTime' not found!");
         }
       }
     } catch (e) {
