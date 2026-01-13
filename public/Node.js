@@ -31,18 +31,18 @@ wss.on('connection', (ws, req) => {
   ws.on('message', (data) => {
     try {
       const message = JSON.parse(data.toString());
-      console.log('[Server] Received:', message);
+      console.log('[WS] Received message:', message);
       
       // クライアントタイプの識別
       if (message.type === 'esp32') {
         // ESP32として登録
         if (clients.esp32) {
-          console.log('[Server] Previous ESP32 connection closed');
+          console.log('[ESP32] Previous connection closed');
           clients.esp32.close();
         }
         clients.browsers.delete(ws);
         clients.esp32 = ws;
-        console.log('[Server] ESP32 registered');
+        console.log('[ESP32] Registered');
         
         // 登録確認を送信
         ws.send(JSON.stringify({ type: 'registered' }));
@@ -53,11 +53,10 @@ wss.on('connection', (ws, req) => {
       if (message.type === 'alarm' || message.type === 'stop') {
         // ブラウザからESP32へ
         if (clients.esp32 && clients.esp32.readyState === 1) {
-          console.log('[Server] Forwarding to ESP32:', message.type);
+          console.log('[Alarm] Forwarded to ESP32:', message);
           clients.esp32.send(JSON.stringify(message));
-          console.log('[Server] Message forwarded successfully');
         } else {
-          console.error('[Server] ESP32 not connected');
+          console.error('[Error] ESP32 not connected');
           ws.send(JSON.stringify({
             type: 'error',
             message: 'ESP32 not connected'
@@ -65,16 +64,20 @@ wss.on('connection', (ws, req) => {
         }
       } else if (message.type === 'alarm_status') {
         // ESP32からブラウザへ
-        console.log('[Server] Broadcasting status to browsers:', message.status);
+        console.log('[Status] Broadcasting to browsers:', message);
+        let sentCount = 0;
         clients.browsers.forEach(browser => {
           if (browser.readyState === 1) {
             browser.send(JSON.stringify(message));
+            sentCount++;
           }
         });
-        console.log(`[Server] Status sent to ${clients.browsers.size} browser(s)`);
+        console.log(`[Status] Sent to ${sentCount} browser(s)`);
+      } else {
+        console.log('[WS] Unknown message type:', message.type);
       }
     } catch (error) {
-      console.error('[Server] Message parse error:', error);
+      console.error('[Error] Message parse error:', error);
     }
   });
   
