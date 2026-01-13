@@ -32,6 +32,21 @@ function connect() {
         } else {
           showStatus(`エラー: ${data.message}`, "error");
         }
+      } else if (data.type === "alarm_status") {
+        // 次回アラーム時刻を更新
+        const nextAlarmEl = document.getElementById("nextAlarmTime");
+        if (nextAlarmEl) {
+          nextAlarmEl.textContent = data.nextAlarm || "--:--";
+          
+          if (data.status === "snooze") {
+            nextAlarmEl.style.color = "#f59e0b"; // オレンジ（スヌーズ中）
+          } else if (data.status === "stopped") {
+            nextAlarmEl.style.color = "var(--subtext)";
+            nextAlarmEl.textContent = "--:--";
+          } else {
+            nextAlarmEl.style.color = "var(--text)";
+          }
+        }
       }
     } catch (e) {
       console.error("[WS] Parse error:", e);
@@ -112,6 +127,13 @@ function sendAlarm() {
   }
   
   const [hour, minute] = timeInput.value.split(":").map(Number);
+  
+  // 次回アラーム時刻をクリア
+  const nextAlarmEl = document.getElementById("nextAlarmTime");
+  if (nextAlarmEl) {
+    nextAlarmEl.textContent = "--:--";
+    nextAlarmEl.style.color = "var(--subtext)";
+  }
   
   console.log("[WS] Sending alarm settings");
   ws.send(JSON.stringify({
