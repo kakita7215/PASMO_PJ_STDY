@@ -152,16 +152,22 @@ function sendAlarm() {
 }
 
 function stopAlarm() {
+  console.log("========================================");
+  console.log("[STOP] Stop button clicked");
+  console.log("========================================");
+  
   if (ws.readyState !== WebSocket.OPEN) {
+    console.error("[STOP] WebSocket not open. State:", ws.readyState);
     showStatus("サーバーに接続されていません", "error");
     return;
   }
   
-  console.log("[WS] Sending stop command");
-  ws.send(JSON.stringify({
-    type: "stop"
-  }));
+  const stopCommand = { type: "stop" };
+  console.log("[WS] Sending stop command:", JSON.stringify(stopCommand));
   
+  ws.send(JSON.stringify(stopCommand));
+  
+  console.log("[STOP] Stop command sent successfully");
   showStatus("停止コマンドを送信中...", "info");
 }
 
