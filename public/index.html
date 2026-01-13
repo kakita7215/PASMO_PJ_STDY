@@ -142,6 +142,10 @@ function setTheme(mode) {
 
     <div class="status">✓ サーバーに接続中</div>
     <br>
+    <div style="text-align: center; margin-bottom: 20px;">
+      <div style="font-size: 14px; color: var(--subtext); margin-bottom: 8px;">設定アラーム時刻</div>
+      <div id="nextAlarmTime" style="font-size: 36px; font-weight: 300; letter-spacing: 2px;">--:--</div>
+    </div>
     <label>アラーム時刻</label>
     <input type="time" id="alarmTime">
     <br>
@@ -167,6 +171,7 @@ function setTheme(mode) {
     <button onclick="sendAlarm()">設定を送信</button>
     <button onclick="stopAlarm()" style="background: #ef4444; margin-top: 10px;">アラームを停止</button>
   </div>
+
 </div>
 
 <script src="index.js"></script>
