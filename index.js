@@ -1,6 +1,5 @@
 // index.js - ESP32 Alarm Server-side JavaScript v5
 
-
 import express from 'express';
 import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
