@@ -39,7 +39,6 @@ function loadSettings() {
   if (snoozeEnable !== null) document.getElementById('snoozeEnable').checked = (snoozeEnable === 'true');
   if (snoozeInterval) document.getElementById('snoozeInterval').value = snoozeInterval;
   if (snoozeCount) document.getElementById('snoozeCount').value = snoozeCount;
-  
   console.log('[Storage] Settings loaded');
 }
 
