@@ -140,18 +140,19 @@ function setTheme(mode) {
 <body>
 <div class="wrapper">
 
-  <div class="theme">
-    <label>
-      <input type="radio" name="theme" checked onclick="setTheme('light')">
-      Light
-    </label>
-    <label>
-      <input type="radio" name="theme" onclick="setTheme('dark')">
-      Dark
-    </label>
-  </div>
-
   <div class="card">
+
+    <div class="theme">
+      <label>
+        <input type="radio" name="theme" checked onclick="setTheme('light')">
+        Light
+      </label>
+      <label>
+        <input type="radio" name="theme" onclick="setTheme('dark')">
+        Dark
+      </label>
+    </div>
+
     <h1>🔔 ESP32 Alarm</h1>
 
     <div class="status">✓ サーバーに接続中</div>
