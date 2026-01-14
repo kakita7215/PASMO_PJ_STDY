@@ -1,3 +1,5 @@
+// package.js - ESP32 Alarm package JavaScript v2
+
 {
   "name": "esp32-alarm-server",
   
