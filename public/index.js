@@ -1,3 +1,4 @@
+// app.js - ESP32 Alarm Client-side JavaScript
 // WebSocket接続（本番環境のURLに変更）
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
