@@ -1,4 +1,4 @@
-// app.js - ESP32 Alarm Client-side JavaScript
+// app.js - ESP32 Alarm Client-side JavaScript v11
 // WebSocket接続（本番環境のURLに変更）
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
@@ -6,6 +6,42 @@ const wsUrl = window.location.protocol === 'https:'
 
 let ws;
 let reconnectTimer;
+
+// ローカルストレージのキー
+const STORAGE_KEYS = {
+  alarmTime: 'esp32_alarm_time',
+  alarmEnable: 'esp32_alarm_enable',
+  snoozeEnable: 'esp32_snooze_enable',
+  snoozeInterval: 'esp32_snooze_interval',
+  snoozeCount: 'esp32_snooze_count'
+};
+
+// 設定を保存
+function saveSettings() {
+  localStorage.setItem(STORAGE_KEYS.alarmTime, document.getElementById('alarmTime').value);
+  localStorage.setItem(STORAGE_KEYS.alarmEnable, document.getElementById('alarmEnable').checked);
+  localStorage.setItem(STORAGE_KEYS.snoozeEnable, document.getElementById('snoozeEnable').checked);
+  localStorage.setItem(STORAGE_KEYS.snoozeInterval, document.getElementById('snoozeInterval').value);
+  localStorage.setItem(STORAGE_KEYS.snoozeCount, document.getElementById('snoozeCount').value);
+  console.log('[Storage] Settings saved');
+}
+
+// 設定を読み込み
+function loadSettings() {
+  const alarmTime = localStorage.getItem(STORAGE_KEYS.alarmTime);
+  const alarmEnable = localStorage.getItem(STORAGE_KEYS.alarmEnable);
+  const snoozeEnable = localStorage.getItem(STORAGE_KEYS.snoozeEnable);
+  const snoozeInterval = localStorage.getItem(STORAGE_KEYS.snoozeInterval);
+  const snoozeCount = localStorage.getItem(STORAGE_KEYS.snoozeCount);
+  
+  if (alarmTime) document.getElementById('alarmTime').value = alarmTime;
+  if (alarmEnable !== null) document.getElementById('alarmEnable').checked = (alarmEnable === 'true');
+  if (snoozeEnable !== null) document.getElementById('snoozeEnable').checked = (snoozeEnable === 'true');
+  if (snoozeInterval) document.getElementById('snoozeInterval').value = snoozeInterval;
+  if (snoozeCount) document.getElementById('snoozeCount').value = snoozeCount;
+  
+  console.log('[Storage] Settings loaded');
+}
 
 function connect() {
   ws = new WebSocket(wsUrl);
@@ -145,6 +181,9 @@ function sendAlarm() {
   
   const [hour, minute] = timeInput.value.split(":").map(Number);
   
+  // 設定を保存
+  saveSettings();
+  
   // 次回アラーム時刻をクリア
   const nextAlarmEl = document.getElementById("nextAlarmTime");
   if (nextAlarmEl) {
@@ -193,6 +232,7 @@ function stopAlarm() {
 
 // ページ読み込み時に接続
 window.addEventListener("load", () => {
+  loadSettings();  // 設定を読み込み
   connect();
 });
 
@@ -201,6 +241,5 @@ window.addEventListener("beforeunload", () => {
   if (ws) {
     ws.close();
   }
-  
   clearTimeout(reconnectTimer);
 });
