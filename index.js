@@ -201,6 +201,5 @@ window.addEventListener("beforeunload", () => {
   if (ws) {
     ws.close();
   }
-  
   clearTimeout(reconnectTimer);
 });
