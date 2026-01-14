@@ -1,245 +1,132 @@
-// app.js - ESP32 Alarm Client-side JavaScript v11
-// WebSocket接続（本番環境のURLに変更）
-const wsUrl = window.location.protocol === 'https:' 
-  ? `wss://${window.location.host}`
-  : `ws://${window.location.host}`;
+import express from 'express';
+import { WebSocketServer } from 'ws';
+import { createServer } from 'http';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-let ws;
-let reconnectTimer;
 
-// ローカルストレージのキー
-const STORAGE_KEYS = {
-  alarmTime: 'esp32_alarm_time',
-  alarmEnable: 'esp32_alarm_enable',
-  snoozeEnable: 'esp32_snooze_enable',
-  snoozeInterval: 'esp32_snooze_interval',
-  snoozeCount: 'esp32_snooze_count'
+// server.js - ESP32 Alarm WebSocket Server
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const app = express();
+const server = createServer(app);
+const wss = new WebSocketServer({ server });
+
+// 接続管理
+const clients = {
+  esp32: null,
+  browsers: new Set()
 };
 
-// 設定を保存
-function saveSettings() {
-  localStorage.setItem(STORAGE_KEYS.alarmTime, document.getElementById('alarmTime').value);
-  localStorage.setItem(STORAGE_KEYS.alarmEnable, document.getElementById('alarmEnable').checked);
-  localStorage.setItem(STORAGE_KEYS.snoozeEnable, document.getElementById('snoozeEnable').checked);
-  localStorage.setItem(STORAGE_KEYS.snoozeInterval, document.getElementById('snoozeInterval').value);
-  localStorage.setItem(STORAGE_KEYS.snoozeCount, document.getElementById('snoozeCount').value);
-  console.log('[Storage] Settings saved');
-}
+// 静的ファイル配信
+app.use(express.static(join(__dirname, 'public')));
 
-// 設定を読み込み
-function loadSettings() {
-  const alarmTime = localStorage.getItem(STORAGE_KEYS.alarmTime);
-  const alarmEnable = localStorage.getItem(STORAGE_KEYS.alarmEnable);
-  const snoozeEnable = localStorage.getItem(STORAGE_KEYS.snoozeEnable);
-  const snoozeInterval = localStorage.getItem(STORAGE_KEYS.snoozeInterval);
-  const snoozeCount = localStorage.getItem(STORAGE_KEYS.snoozeCount);
+// WebSocket接続処理
+wss.on('connection', (ws, req) => {
+  console.log('[WS] Connected from:', req.socket.remoteAddress);
   
-  if (alarmTime) document.getElementById('alarmTime').value = alarmTime;
-  if (alarmEnable !== null) document.getElementById('alarmEnable').checked = (alarmEnable === 'true');
-  if (snoozeEnable !== null) document.getElementById('snoozeEnable').checked = (snoozeEnable === 'true');
-  if (snoozeInterval) document.getElementById('snoozeInterval').value = snoozeInterval;
-  if (snoozeCount) document.getElementById('snoozeCount').value = snoozeCount;
+  // 初期状態：ブラウザとして登録
+  clients.browsers.add(ws);
+  console.log(`[Browser] Total browsers: ${clients.browsers.size}`);
   
-  console.log('[Storage] Settings loaded');
-}
-
-function connect() {
-  ws = new WebSocket(wsUrl);
-  
-  ws.onopen = () => {
-    console.log("[WS] Connected");
-    updateConnectionStatus(true);
-    clearTimeout(reconnectTimer);
-  };
-  
-  ws.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      console.log("[WS] Received:", data);
-      
-      if (data.type === "alarm_ack") {
-        if (data.success) {
-          showStatus("設定を送信しました！", "success");
-        } else {
-          showStatus(`エラー: ${data.message}`, "error");
-        }
-      } else if (data.type === "stop_ack") {
-        if (data.success) {
-          showStatus("アラームを停止しました", "success");
-        } else {
-          showStatus(`エラー: ${data.message}`, "error");
-        }
-      } else if (data.type === "alarm_status") {
-        // 次回アラーム時刻を更新
-        console.log("[Status] Updating next alarm display:", data.nextAlarm);
-        const nextAlarmEl = document.getElementById("nextAlarmTime");
-        const stopButton = document.getElementById("stopButton");
-        
-        if (nextAlarmEl) {
-          nextAlarmEl.textContent = data.nextAlarm || "--:--";
-          console.log("[Status] Display updated to:", nextAlarmEl.textContent);
-          
-          if (data.status === "snooze") {
-            nextAlarmEl.style.color = "#f59e0b"; // オレンジ（スヌーズ中）
-            console.log("[Status] Color set to orange (snooze)");
-            // スヌーズ中は停止ボタン有効
-            if (stopButton) stopButton.disabled = false;
-          } else if (data.status === "stopped") {
-            nextAlarmEl.style.color = "var(--subtext)";
-            nextAlarmEl.textContent = "--:--";
-            console.log("[Status] Color set to gray (stopped)");
-            // 停止後は停止ボタン無効
-            if (stopButton) stopButton.disabled = true;
-          } else {
-            nextAlarmEl.style.color = "var(--text)";
-            console.log("[Status] Color set to default (set)");
-            // アラーム設定時は停止ボタン無効
-            if (stopButton) stopButton.disabled = true;
-          }
-        } else {
-          console.error("[Status] Element 'nextAlarmTime' not found!");
-        }
-      }
-    } catch (e) {
-      console.error("[WS] Parse error:", e);
-    }
-  };
-  
-  ws.onclose = () => {
-    console.log("[WS] Disconnected");
-    updateConnectionStatus(false);
+  ws.on('message', (data) => {
+    const rawMessage = data.toString();
+    console.log('[DEBUG] Raw received:', rawMessage);
     
-    // 5秒後に再接続
-    reconnectTimer = setTimeout(() => {
-      console.log("[WS] Reconnecting...");
-      connect();
-    }, 5000);
-  };
-  
-  ws.onerror = (err) => {
-    console.error("[WS] Error:", err);
-    showStatus("通信エラーが発生しました", "error");
-  };
-}
-
-function updateConnectionStatus(connected) {
-  const statusEl = document.querySelector(".status");
-  
-  if (connected) {
-    statusEl.textContent = "✓ サーバーに接続中";
-    statusEl.style.background = "#dcfce7";
-    statusEl.style.color = "#166534";
-  } else {
-    statusEl.textContent = "✗ サーバーに未接続";
-    statusEl.style.background = "#fee2e2";
-    statusEl.style.color = "#991b1b";
-  }
-}
-
-function showStatus(message, type) {
-  const statusEl = document.querySelector(".status");
-  const originalBg = statusEl.style.background;
-  const originalColor = statusEl.style.color;
-  const originalText = statusEl.textContent;
-  
-  // ステータスを一時的に変更
-  if (type === "success") {
-    statusEl.style.background = "#dcfce7";
-    statusEl.style.color = "#166534";
-  } else if (type === "error") {
-    statusEl.style.background = "#fee2e2";
-    statusEl.style.color = "#991b1b";
-  } else {
-    statusEl.style.background = "#dbeafe";
-    statusEl.style.color = "#1e40af";
-  }
-  
-  statusEl.textContent = message;
-  
-  // 3秒後に元に戻す
-  setTimeout(() => {
-    statusEl.style.background = originalBg;
-    statusEl.style.color = originalColor;
-    statusEl.textContent = originalText;
-  }, 3000);
-}
-
-function sendAlarm() {
-  const timeInput = document.getElementById("alarmTime");
-  const enableCheckbox = document.getElementById("alarmEnable");
-  const stopButton = document.getElementById("stopButton");
-  
-  if (!timeInput.value) {
-    showStatus("時刻を入力してください", "error");
-    return;
-  }
-  
-  if (ws.readyState !== WebSocket.OPEN) {
-    showStatus("サーバーに接続されていません", "error");
-    return;
-  }
-  
-  const [hour, minute] = timeInput.value.split(":").map(Number);
-  
-  // 設定を保存
-  saveSettings();
-  
-  // 次回アラーム時刻をクリア
-  const nextAlarmEl = document.getElementById("nextAlarmTime");
-  if (nextAlarmEl) {
-    nextAlarmEl.textContent = "--:--";
-    nextAlarmEl.style.color = "var(--subtext)";
-  }
-  
-  // 停止ボタンを無効化
-  if (stopButton) stopButton.disabled = true;
-  
-  console.log("[WS] Sending alarm settings");
-  ws.send(JSON.stringify({
-    type: "alarm",
-    hour: hour,
-    minute: minute,
-    enable: document.getElementById("alarmEnable").checked,
-    snooze: {
-      enable: document.getElementById("snoozeEnable").checked,
-      interval: Number(document.getElementById("snoozeInterval").value),
-      count: Number(document.getElementById("snoozeCount").value)
+    try {
+      const message = JSON.parse(rawMessage);
+      console.log('[WS] Parsed message type:', message.type);
+      
+      // クライアントタイプの識別
+      if (message.type === 'esp32') {
+        // ESP32として登録
+        if (clients.esp32) {
+          console.log('[ESP32] Closing previous connection');
+          clients.esp32.close();
+        }
+        clients.browsers.delete(ws);
+        clients.esp32 = ws;
+        console.log('[ESP32] Registered');
+        
+        // 登録確認を送信
+        const response = { type: 'registered', message: 'ESP32 registered successfully' };
+        ws.send(JSON.stringify(response));
+        console.log('[ESP32] Sent registration confirmation');
+        return;
+      }
+      
+      // メッセージのルーティング
+      if (message.type === 'alarm' || message.type === 'stop') {
+        // ブラウザからESP32へ
+        console.log(`[${message.type.toUpperCase()}] Received from browser`);
+        
+        if (clients.esp32 && clients.esp32.readyState === 1) {
+          console.log(`[${message.type.toUpperCase()}] Forwarding to ESP32:`, message);
+          clients.esp32.send(JSON.stringify(message));
+          console.log(`[${message.type.toUpperCase()}] Successfully forwarded`);
+        } else {
+          console.error('[Error] ESP32 not connected');
+          console.error('[Error] ESP32 state:', clients.esp32 ? clients.esp32.readyState : 'null');
+          
+          if (clients.browsers.has(ws)) {
+            ws.send(JSON.stringify({
+              type: 'error',
+              message: 'ESP32 not connected'
+            }));
+          }
+        }
+      } else if (message.type === 'alarm_status') {
+        // ESP32からブラウザへ
+        console.log('[Status] Received from ESP32:', message);
+        console.log('[Status] Current browser count:', clients.browsers.size);
+        
+        let sentCount = 0;
+        clients.browsers.forEach(browser => {
+          if (browser.readyState === 1) {
+            console.log('[Status] Sending to browser...');
+            browser.send(JSON.stringify(message));
+            sentCount++;
+          } else {
+            console.log('[Status] Browser not ready, state:', browser.readyState);
+          }
+        });
+        console.log(`[Status] Successfully sent to ${sentCount} browser(s)`);
+      } else {
+        console.log('[WS] Unknown message type:', message.type);
+      }
+    } catch (error) {
+      console.error('[Error] Message parse error:', error);
+      console.error('[Error] Raw message was:', rawMessage);
     }
-  }));
-
-  showStatus("送信中...", "info");
-}
-
-function stopAlarm() {
-  console.log("========================================");
-  console.log("[STOP] Stop button clicked");
-  console.log("========================================");
+  });
   
-  if (ws.readyState !== WebSocket.OPEN) {
-    console.error("[STOP] WebSocket not open. State:", ws.readyState);
-    showStatus("サーバーに接続されていません", "error");
-    return;
-  }
+  ws.on('close', () => {
+    console.log('[WS] Connection closed');
+    if (clients.esp32 === ws) {
+      clients.esp32 = null;
+      console.log('[ESP32] Disconnected');
+    } else {
+      clients.browsers.delete(ws);
+      console.log(`[Browser] Disconnected. Remaining: ${clients.browsers.size}`);
+    }
+  });
   
-  const stopCommand = { type: "stop" };
-  console.log("[WS] Sending stop command:", JSON.stringify(stopCommand));
-  
-  ws.send(JSON.stringify(stopCommand));
-  
-  console.log("[STOP] Stop command sent successfully");
-  showStatus("停止コマンドを送信中...", "info");
-}
-
-// ページ読み込み時に接続
-window.addEventListener("load", () => {
-  loadSettings();  // 設定を読み込み
-  connect();
+  ws.on('error', (error) => {
+    console.error('[Error] WebSocket error:', error);
+  });
 });
 
-// ページ離脱時にクリーンアップ
-window.addEventListener("beforeunload", () => {
-  if (ws) {
-    ws.close();
-  }
-  clearTimeout(reconnectTimer);
+// サーバー起動
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log(`[Server] Running on port ${PORT}`);
+  console.log(`[Server] Access: http://localhost:${PORT}`);
 });
+
+// 定期的な接続状態表示
+setInterval(() => {
+  const esp32Status = clients.esp32 ? `Connected (state: ${clients.esp32.readyState})` : 'Disconnected';
+  console.log(`[Server] Status - ESP32: ${esp32Status}, Browsers: ${clients.browsers.size}`);
+}, 60000);
