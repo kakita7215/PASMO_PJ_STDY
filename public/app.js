@@ -52,53 +52,66 @@ function connect() {
   };
   
   ws.onmessage = (event) => {
-    try {
-      const data = JSON.parse(event.data);
-      console.log("[WS] Received:", data);
-      
-      if (data.type === "alarm_ack") {
-        if (data.success) {
-          showStatus("設定を送信しました！", "success");
-        } else {
-          showStatus(`エラー: ${data.message}`, "error");
-        }
-      } else if (data.type === "stop_ack") {
-        if (data.success) {
-          showStatus("アラームを停止しました", "success");
-        } else {
-          showStatus(`エラー: ${data.message}`, "error");
-        }
-      } else if (data.type === "alarm_status") {
-        console.log("[Status] Updating next alarm display:", data.nextAlarm);
-        const nextAlarmEl = document.getElementById("nextAlarmTime");
-        const stopButton = document.getElementById("stopButton");
-        
-        if (nextAlarmEl) {
-          nextAlarmEl.textContent = data.nextAlarm || "--:--";
-          console.log("[Status] Display updated to:", nextAlarmEl.textContent);
-          
-          if (data.status === "snooze") {
-            nextAlarmEl.style.color = "#f59e0b";
-            console.log("[Status] Color set to orange (snooze)");
-            if (stopButton) stopButton.disabled = false;
-          } else if (data.status === "stopped") {
-            nextAlarmEl.style.color = "var(--subtext)";
-            nextAlarmEl.textContent = "--:--";
-            console.log("[Status] Color set to gray (stopped)");
-            if (stopButton) stopButton.disabled = true;
-          } else {
-            nextAlarmEl.style.color = "var(--text)";
-            console.log("[Status] Color set to default (set)");
-            if (stopButton) stopButton.disabled = true;
-          }
-        } else {
-          console.error("[Status] Element 'nextAlarmTime' not found!");
-        }
+  try {
+    const data = JSON.parse(event.data);
+    console.log("[WS] Received:", data);
+
+    if (data.type === "alarm_ack") {
+      if (data.success) {
+        showStatus("設定を送信しました！", "success");
+      } else {
+        showStatus(`エラー: ${data.message}`, "error");
       }
-    } catch (e) {
-      console.error("[WS] Parse error:", e);
+
+    } else if (data.type === "stop_ack") {
+      if (data.success) {
+        showStatus("アラームを停止しました", "success");
+      } else {
+        showStatus(`エラー: ${data.message}`, "error");
+      }
+
+    } else if (data.type === "alarm_status") {
+      console.log("[Status] Updating next alarm display:", data.nextAlarm);
+
+      const nextAlarmEl = document.getElementById("nextAlarmTime");
+      const stopButton  = document.getElementById("stopButton");
+
+      if (!nextAlarmEl) {
+        console.error("[Status] Element 'nextAlarmTime' not found!");
+        return;
+      }
+
+      const time = data.nextAlarm || "--:--";
+      nextAlarmEl.textContent = time;
+
+      /* ★ 追加：状態に応じて localStorage を更新 */
+      if (data.status === "stopped") {
+        localStorage.removeItem("nextAlarmTime");
+      } else {
+        localStorage.setItem("nextAlarmTime", time);
+      }
+
+      console.log("[Status] Display updated to:", time);
+
+      if (data.status === "snooze") {
+        nextAlarmEl.style.color = "#f59e0b";
+        if (stopButton) stopButton.disabled = false;
+
+      } else if (data.status === "stopped") {
+        nextAlarmEl.style.color = "var(--subtext)";
+        nextAlarmEl.textContent = "--:--";
+        if (stopButton) stopButton.disabled = true;
+
+      } else {
+        nextAlarmEl.style.color = "var(--text)";
+        if (stopButton) stopButton.disabled = true;
+      }
     }
-  };
+
+  } catch (e) {
+    console.error("[WS] Parse error:", e);
+  }
+};
   
   ws.onclose = () => {
     console.log("[WS] Disconnected");
@@ -228,4 +241,15 @@ window.addEventListener("beforeunload", () => {
     ws.close();
   }
   clearTimeout(reconnectTimer);
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedTime = localStorage.getItem("nextAlarmTime");
+  const nextAlarmEl = document.getElementById("nextAlarmTime");
+
+  if (savedTime && nextAlarmEl) {
+    nextAlarmEl.textContent = savedTime;
+    nextAlarmEl.style.color = "var(--text)";
+    console.log("[Init] Restored next alarm from localStorage:", savedTime);
+  }
 });
