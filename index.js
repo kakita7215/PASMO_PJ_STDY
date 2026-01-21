@@ -1,4 +1,4 @@
-// index.js - ESP32 Alarm Server-side JavaScript v5
+﻿// index.js - ESP32 Alarm Server-side JavaScript v27.01
 
 import express from 'express';
 import { WebSocketServer } from 'ws';
@@ -60,7 +60,7 @@ wss.on('connection', (ws, req) => {
       }
       
       // メッセージのルーティング
-      if (message.type === 'alarm' || message.type === 'stop') {
+      if (message.type === 'alarm' || message.type === 'stop' || message.type === 'time_sync') {
         // ブラウザからESP32へ
         console.log(`[${message.type.toUpperCase()}] Received from browser`);
         
