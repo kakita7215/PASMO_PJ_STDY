@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESP32 Alarm v27.02</title>
+<title>ESP32 Alarm v27.03</title>
 
 <style>
 /* ========= テーマ定義（色のみ） ========= */
@@ -122,6 +122,29 @@ input[type="number"] {
   margin-top: 14px;
 }
 
+.section-divider {
+  height: 0;
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 18px 0 12px;
+}
+
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--subtext);
+}
+
+.day-grid label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 0;
+}
+
 button {
   width: 100%;
   margin-top: 20px;
@@ -180,18 +203,20 @@ function setTheme(mode) {
     </div>
 
     <h1>🔔 ESP32 Alarm</h1>
-    <div id="currentTime" style="font-size: 44px; font-weight: 600; text-align: center; letter-spacing: 2px; margin: 6px 0 18px;">--:--</div>
+    <div id="currentTime" style="font-size: 56px; font-weight: 600; text-align: center; letter-spacing: 2px; margin: 6px 0 18px;">--:--</div>
     
     <div style="text-align: center; margin-bottom: 20px;">
       <div style="font-size: 14px; color: var(--subtext); margin-bottom: 8px;">設定アラーム時刻</div>
       <div id="nextAlarmTime" style="font-size: 36px; font-weight: 300; letter-spacing: 2px;">--:--</div>
     </div>
     
-    <label>アラーム時刻
+    <label>
       <input type="checkbox" id="alarmEnable" style="margin-left: 10px;">
       <span style="font-weight: 400; font-size: 13px; color: var(--subtext);">アラームを有効にする</span>
     </label>
     <input type="time" id="alarmTime">
+
+    <hr class="section-divider">
 
     <label class="checkbox">
       <input type="checkbox" id="snoozeEnable">
@@ -203,6 +228,19 @@ function setTheme(mode) {
     
     <label>スヌーズ回数</label>
     <input type="number" id="snoozeCount" min="1" max="10" value="3">
+
+    <div class="day-grid" id="snoozeDays">
+      <label><input type="checkbox" id="snoozeEveryday">毎日</label>
+      <label><input type="checkbox" id="snoozeWeekdays">平日 <span style="font-size: 11px; color: var(--subtext);">(土日祝を除く)</span></label>
+      <span></span>
+      <label><input type="checkbox" data-day="mon">月</label>
+      <label><input type="checkbox" data-day="tue">火</label>
+      <label><input type="checkbox" data-day="wed">水</label>
+      <label><input type="checkbox" data-day="thu">木</label>
+      <label><input type="checkbox" data-day="fri">金</label>
+      <label><input type="checkbox" data-day="sat">土</label>
+      <label><input type="checkbox" data-day="sun">日</label>
+    </div>
     
     <button onclick="sendAlarm()">設定を送信</button>
     <button onclick="sendTimeSync()">時刻同期</button>
