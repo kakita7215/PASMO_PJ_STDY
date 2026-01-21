@@ -1,4 +1,4 @@
-﻿// app.js - ESP32 Alarm Client-side JavaScript v27.02
+// app.js - ESP32 Alarm Client-side JavaScript v27.04
 
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
@@ -11,15 +11,19 @@ let reconnectTimer;
 const STORAGE_KEYS = {
   alarmTime: 'esp32_alarm_time',
   alarmEnable: 'esp32_alarm_enable',
+  alarmDays: 'esp32_alarm_days',
   snoozeEnable: 'esp32_snooze_enable',
   snoozeInterval: 'esp32_snooze_interval',
   snoozeCount: 'esp32_snooze_count'
 };
 
+const ALARM_DAY_KEYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+
 // 設定を保存
 function saveSettings() {
   localStorage.setItem(STORAGE_KEYS.alarmTime, document.getElementById('alarmTime').value);
   localStorage.setItem(STORAGE_KEYS.alarmEnable, document.getElementById('alarmEnable').checked);
+  localStorage.setItem(STORAGE_KEYS.alarmDays, JSON.stringify(getAlarmDays()));
   localStorage.setItem(STORAGE_KEYS.snoozeEnable, document.getElementById('snoozeEnable').checked);
   localStorage.setItem(STORAGE_KEYS.snoozeInterval, document.getElementById('snoozeInterval').value);
   localStorage.setItem(STORAGE_KEYS.snoozeCount, document.getElementById('snoozeCount').value);
@@ -30,16 +34,104 @@ function saveSettings() {
 function loadSettings() {
   const alarmTime = localStorage.getItem(STORAGE_KEYS.alarmTime);
   const alarmEnable = localStorage.getItem(STORAGE_KEYS.alarmEnable);
+  const alarmDays = localStorage.getItem(STORAGE_KEYS.alarmDays);
   const snoozeEnable = localStorage.getItem(STORAGE_KEYS.snoozeEnable);
   const snoozeInterval = localStorage.getItem(STORAGE_KEYS.snoozeInterval);
   const snoozeCount = localStorage.getItem(STORAGE_KEYS.snoozeCount);
   
   if (alarmTime) document.getElementById('alarmTime').value = alarmTime;
   if (alarmEnable !== null) document.getElementById('alarmEnable').checked = (alarmEnable === 'true');
+  if (alarmDays) {
+    try {
+      const parsed = JSON.parse(alarmDays);
+      setAlarmDays(parsed);
+    } catch (e) {
+      console.warn('[Storage] Invalid alarm days, ignoring');
+    }
+  }
   if (snoozeEnable !== null) document.getElementById('snoozeEnable').checked = (snoozeEnable === 'true');
   if (snoozeInterval) document.getElementById('snoozeInterval').value = snoozeInterval;
   if (snoozeCount) document.getElementById('snoozeCount').value = snoozeCount;
+  updateAlarmGroupChecks();
   console.log('[Storage] Settings loaded');
+}
+
+function getAlarmDays() {
+  const days = {};
+  ALARM_DAY_KEYS.forEach((day) => {
+    const el = document.querySelector(`[data-day="${day}"]`);
+    days[day] = !!(el && el.checked);
+  });
+  return days;
+}
+
+function setAlarmDays(days) {
+  ALARM_DAY_KEYS.forEach((day) => {
+    const el = document.querySelector(`[data-day="${day}"]`);
+    if (el && typeof days[day] !== "undefined") {
+      el.checked = !!days[day];
+    }
+  });
+}
+
+function updateAlarmGroupChecks() {
+  const days = getAlarmDays();
+  const everydayEl = document.getElementById("alarmEveryday");
+  const weekdaysEl = document.getElementById("alarmWeekdays");
+  if (everydayEl) {
+    everydayEl.checked = ALARM_DAY_KEYS.every((day) => days[day]);
+  }
+  if (weekdaysEl) {
+    const weekdays = ["mon", "tue", "wed", "thu", "fri"];
+    weekdaysEl.checked = weekdays.every((day) => days[day]);
+  }
+}
+
+function applyEveryday(checked) {
+  ALARM_DAY_KEYS.forEach((day) => {
+    const el = document.querySelector(`[data-day="${day}"]`);
+    if (el) el.checked = checked;
+  });
+}
+
+function applyWeekdays() {
+  const weekdays = ["mon", "tue", "wed", "thu", "fri"];
+  ALARM_DAY_KEYS.forEach((day) => {
+    const el = document.querySelector(`[data-day="${day}"]`);
+    if (!el) return;
+    el.checked = weekdays.includes(day);
+  });
+}
+
+function bindAlarmDayControls() {
+  const everydayEl = document.getElementById("alarmEveryday");
+  const weekdaysEl = document.getElementById("alarmWeekdays");
+  const dayEls = document.querySelectorAll("[data-day]");
+
+  if (everydayEl) {
+    everydayEl.addEventListener("change", (e) => {
+      applyEveryday(e.target.checked);
+      if (weekdaysEl) weekdaysEl.checked = false;
+      saveSettings();
+    });
+  }
+
+  if (weekdaysEl) {
+    weekdaysEl.addEventListener("change", (e) => {
+      if (e.target.checked) {
+        applyWeekdays();
+      }
+      if (everydayEl) everydayEl.checked = false;
+      saveSettings();
+    });
+  }
+
+  dayEls.forEach((el) => {
+    el.addEventListener("change", () => {
+      updateAlarmGroupChecks();
+      saveSettings();
+    });
+  });
 }
 
 function updateCurrentTime() {
@@ -171,6 +263,7 @@ function sendAlarm() {
     type: "alarm",
     hour: hour,
     minute: minute,
+    days: getAlarmDays(),
     enable: document.getElementById("alarmEnable").checked,
     snooze: {
       enable: document.getElementById("snoozeEnable").checked,
@@ -198,6 +291,7 @@ window.addEventListener("load", () => {
   loadSettings();
   updateCurrentTime();
   setInterval(updateCurrentTime, 1000);
+  bindAlarmDayControls();
   connect();
 });
 
