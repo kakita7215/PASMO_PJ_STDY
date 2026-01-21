@@ -1,4 +1,4 @@
-﻿// app.js - ESP32 Alarm Client-side JavaScript v12
+﻿// app.js - ESP32 Alarm Client-side JavaScript v13
 
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
@@ -247,4 +247,5 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("[Init] Restored next alarm from localStorage:", savedTime);
   }
 });
+
 
