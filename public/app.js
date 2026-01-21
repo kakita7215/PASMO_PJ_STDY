@@ -195,7 +195,18 @@ function sendAlarm() {
 
   showStatus("送信中...", "info");
 }
-\n\nfunction sendTimeSync() {\n  if (!ws || ws.readyState !== WebSocket.OPEN) {\n    showStatus("サーバーに接続されていません", "error");\n    return;\n  }\n\n  ws.send(JSON.stringify({ type: "time_sync" }));\n  showStatus("時刻同期を要求しました", "info");\n}\n
+
+
+function sendTimeSync() {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    showStatus("サーバーに接続されていません", "error");
+    return;
+  }
+
+  ws.send(JSON.stringify({ type: "time_sync" }));
+  showStatus("時刻同期を要求しました", "info");
+}
+
 
 window.addEventListener("load", () => {
   loadSettings();
