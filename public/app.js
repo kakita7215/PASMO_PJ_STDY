@@ -1,4 +1,4 @@
-// app.js - ESP32 Alarm Client-side JavaScript v12
+﻿// app.js - ESP32 Alarm Client-side JavaScript v12
 
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
@@ -6,6 +6,7 @@ const wsUrl = window.location.protocol === 'https:'
 
 let ws;
 let reconnectTimer;
+let currentDisplayMode = "clock";
 
 // ローカルストレージのキー
 const STORAGE_KEYS = {
@@ -62,19 +63,10 @@ function connect() {
       } else {
         showStatus(`エラー: ${data.message}`, "error");
       }
-
-    } else if (data.type === "stop_ack") {
-      if (data.success) {
-        showStatus("アラームを停止しました", "success");
-      } else {
-        showStatus(`エラー: ${data.message}`, "error");
-      }
-
     } else if (data.type === "alarm_status") {
       console.log("[Status] Updating next alarm display:", data.nextAlarm);
 
       const nextAlarmEl = document.getElementById("nextAlarmTime");
-      const stopButton  = document.getElementById("stopButton");
 
       if (!nextAlarmEl) {
         console.error("[Status] Element 'nextAlarmTime' not found!");
@@ -95,16 +87,13 @@ function connect() {
 
       if (data.status === "snooze") {
         nextAlarmEl.style.color = "#f59e0b";
-        if (stopButton) stopButton.disabled = false;
 
       } else if (data.status === "stopped") {
         nextAlarmEl.style.color = "var(--subtext)";
         nextAlarmEl.textContent = "--:--";
-        if (stopButton) stopButton.disabled = true;
 
       } else {
         nextAlarmEl.style.color = "var(--text)";
-        if (stopButton) stopButton.disabled = true;
       }
     }
 
@@ -171,7 +160,6 @@ function showStatus(message, type) {
 
 function sendAlarm() {
   const timeInput = document.getElementById("alarmTime");
-  const stopButton = document.getElementById("stopButton");
   
   if (!timeInput.value) {
     showStatus("時刻を入力してください", "error");
@@ -193,8 +181,6 @@ function sendAlarm() {
     nextAlarmEl.style.color = "var(--subtext)";
   }
   
-  if (stopButton) stopButton.disabled = true;
-  
   console.log("[WS] Sending alarm settings");
   ws.send(JSON.stringify({
     type: "alarm",
@@ -211,26 +197,34 @@ function sendAlarm() {
   showStatus("送信中...", "info");
 }
 
-function stopAlarm() {
-  console.log("========================================");
-  console.log("[STOP] Stop button clicked");
-  console.log("========================================");
-  
-  if (ws.readyState !== WebSocket.OPEN) {
-    console.error("[STOP] WebSocket not open. State:", ws.readyState);
+
+function updateDisplayModeButtons() {
+  const clockBtn = document.getElementById("modeClock");
+  const playTimeBtn = document.getElementById("modePlayTime");
+  const eqBtn = document.getElementById("modeEq");
+  if (!clockBtn || !playTimeBtn || !eqBtn) return;
+
+  clockBtn.classList.toggle("active", currentDisplayMode === "clock");
+  playTimeBtn.classList.toggle("active", currentDisplayMode === "play_time");
+  eqBtn.classList.toggle("active", currentDisplayMode === "eq");
+}
+
+function setDisplayMode(mode) {
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
     showStatus("サーバーに接続されていません", "error");
     return;
   }
-  
-  const stopCommand = { type: "stop" };
-  console.log("[WS] Sending stop command:", JSON.stringify(stopCommand));
-  
-  ws.send(JSON.stringify(stopCommand));
-  
-  console.log("[STOP] Stop command sent successfully");
-  showStatus("停止コマンドを送信中...", "info");
-}
 
+  currentDisplayMode = mode;
+  updateDisplayModeButtons();
+
+  ws.send(JSON.stringify({
+    type: "display_mode",
+    mode: mode
+  }));
+
+  showStatus("表示モードを送信しました", "info");
+}
 window.addEventListener("load", () => {
   loadSettings();
   connect();
@@ -253,3 +247,4 @@ window.addEventListener("DOMContentLoaded", () => {
     console.log("[Init] Restored next alarm from localStorage:", savedTime);
   }
 });
+
