@@ -1,4 +1,4 @@
-﻿// app.js - ESP32 Alarm Client-side JavaScript v27.01
+﻿// app.js - ESP32 Alarm Client-side JavaScript v27.02
 
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
@@ -51,64 +51,52 @@ function connect() {
     clearTimeout(reconnectTimer);
   };
   
-  ws.onmessage = (event) => {
-  try {
-    const data = JSON.parse(event.data);
-    console.log("[WS] Received:", data);
+    ws.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      console.log("[WS] Received:", data);
 
-    if (data.type === "alarm_ack") {
-      if (data.success) {
-        showStatus("設定を送信しました！", "success");
-      } else {
-        showStatus(`エラー: ${data.message}`, "error");
+      if (data.type === "alarm_ack") {
+        if (data.success) {
+          showStatus("設定を送信しました！", "success");
+        } else {
+          showStatus(`エラー: ${data.message}`, "error");
+        }
+      } else if (data.type === "alarm_status") {
+        console.log("[Status] Updating next alarm display:", data.nextAlarm);
+
+        const nextAlarmEl = document.getElementById("nextAlarmTime");
+
+        if (!nextAlarmEl) {
+          console.error("[Status] Element 'nextAlarmTime' not found!");
+          return;
+        }
+
+        const time = data.nextAlarm || "--:--";
+        nextAlarmEl.textContent = time;
+
+        if (data.status === "stopped") {
+          localStorage.removeItem("nextAlarmTime");
+        } else {
+          localStorage.setItem("nextAlarmTime", time);
+        }
+
+        console.log("[Status] Display updated to:", time);
+
+        if (data.status === "snooze") {
+          nextAlarmEl.style.color = "#f59e0b";
+        } else if (data.status === "stopped") {
+          nextAlarmEl.style.color = "var(--subtext)";
+          nextAlarmEl.textContent = "--:--";
+        } else {
+          nextAlarmEl.style.color = "var(--text)";
+        }
+      } else if (data.type === "esp32_status") {
+        updateEsp32Status(!!data.connected);
       }
-    } else if (data.type === "alarm_status") {
-      console.log("[Status] Updating next alarm display:", data.nextAlarm);
-
-      const nextAlarmEl = document.getElementById("nextAlarmTime");
-
-      if (!nextAlarmEl) {
-        console.error("[Status] Element 'nextAlarmTime' not found!");
-        return;
-      }
-
-      const time = data.nextAlarm || "--:--";
-      nextAlarmEl.textContent = time;
-
-      /* ★ 追加：状態に応じて localStorage を更新 */
-      if (data.status === "stopped") {
-        localStorage.removeItem("nextAlarmTime");
-      } else {
-        localStorage.setItem("nextAlarmTime", time);
-      }
-
-      console.log("[Status] Display updated to:", time);
-
-      if (data.status === "snooze") {
-        nextAlarmEl.style.color = "#f59e0b";
-
-      } else if (data.status === "stopped") {
-        nextAlarmEl.style.color = "var(--subtext)";
-        nextAlarmEl.textContent = "--:--";
-
-      } else {
-        nextAlarmEl.style.color = "var(--text)";
-      }
+    } catch (e) {
+      console.error("[WS] Parse error:", e);
     }
-
-  } catch (e) {
-    console.error("[WS] Parse error:", e);
-  }
-};
-  
-  ws.onclose = () => {
-    console.log("[WS] Disconnected");
-    updateConnectionStatus(false);
-    
-    reconnectTimer = setTimeout(() => {
-      console.log("[WS] Reconnecting...");
-      connect();
-    }, 5000);
   };
   
   ws.onerror = (err) => {
@@ -118,42 +106,31 @@ function connect() {
 }
 
 function updateConnectionStatus(connected) {
-  const statusEl = document.querySelector(".status");
-  
-  if (connected) {
-    statusEl.textContent = "✓ サーバーに接続中";
-    statusEl.style.background = "#dcfce7";
-    statusEl.style.color = "#166534";
-  } else {
-    statusEl.textContent = "✗ サーバーに未接続";
-    statusEl.style.background = "#fee2e2";
-    statusEl.style.color = "#991b1b";
-  }
+  const el = document.getElementById("statusClient");
+  if (!el) return;
+  el.textContent = connected ? "HTML: 接続中" : "HTML: 未接続";
+  el.classList.toggle("disconnected", !connected);
+}
+
+function updateEsp32Status(connected) {
+  const el = document.getElementById("statusEsp32");
+  if (!el) return;
+  el.textContent = connected ? "ESP32: 接続中" : "ESP32: 未接続";
+  el.classList.toggle("disconnected", !connected);
 }
 
 function showStatus(message, type) {
-  const statusEl = document.querySelector(".status");
-  const originalBg = statusEl.style.background;
-  const originalColor = statusEl.style.color;
+  const statusEl = document.getElementById("statusClient");
+  if (!statusEl) return;
   const originalText = statusEl.textContent;
-  
-  if (type === "success") {
-    statusEl.style.background = "#dcfce7";
-    statusEl.style.color = "#166534";
-  } else if (type === "error") {
-    statusEl.style.background = "#fee2e2";
-    statusEl.style.color = "#991b1b";
-  } else {
-    statusEl.style.background = "#dbeafe";
-    statusEl.style.color = "#1e40af";
-  }
-  
+  const originalDisconnected = statusEl.classList.contains("disconnected");
+
   statusEl.textContent = message;
-  
+  statusEl.classList.toggle("disconnected", type === "error");
+
   setTimeout(() => {
-    statusEl.style.background = originalBg;
-    statusEl.style.color = originalColor;
     statusEl.textContent = originalText;
+    statusEl.classList.toggle("disconnected", originalDisconnected);
   }, 3000);
 }
 
