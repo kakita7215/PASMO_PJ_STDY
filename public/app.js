@@ -42,6 +42,15 @@ function loadSettings() {
   console.log('[Storage] Settings loaded');
 }
 
+function updateCurrentTime() {
+  const el = document.getElementById("currentTime");
+  if (!el) return;
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  el.textContent = `${hh}:${mm}`;
+}
+
 function connect() {
   ws = new WebSocket(wsUrl);
   
@@ -187,6 +196,8 @@ function sendTimeSync() {
 
 window.addEventListener("load", () => {
   loadSettings();
+  updateCurrentTime();
+  setInterval(updateCurrentTime, 1000);
   connect();
 });
 
