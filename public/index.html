@@ -131,7 +131,7 @@ input[type="number"] {
 
 .day-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin-top: 10px;
   font-size: 13px;
@@ -143,6 +143,7 @@ input[type="number"] {
   align-items: center;
   gap: 6px;
   margin-top: 0;
+  white-space: nowrap;
 }
 
 button {
@@ -219,8 +220,7 @@ function setTheme(mode) {
     <label>アラーム曜日</label>
     <div class="day-grid" id="alarmDays">
       <label><input type="checkbox" id="alarmEveryday">毎日</label>
-      <label><input type="checkbox" id="alarmWeekdays">平日 <span style="font-size: 11px; color: var(--subtext);">(土日祝を除く)</span></label>
-      <span></span>
+      <label><input type="checkbox" id="alarmWeekdays">平日 (土日祝を除く)</label>
       <label><input type="checkbox" data-day="mon">月</label>
       <label><input type="checkbox" data-day="tue">火</label>
       <label><input type="checkbox" data-day="wed">水</label>
