@@ -1,4 +1,4 @@
-﻿// index.js - ESP32 Alarm Server-side JavaScript v27.01
+﻿// index.js - ESP32 Alarm Server-side JavaScript v27.02
 
 import express from 'express';
 import { WebSocketServer } from 'ws';
@@ -22,6 +22,15 @@ const clients = {
   browsers: new Set()
 };
 
+function broadcastEsp32Status(connected) {
+  const payload = JSON.stringify({ type: 'esp32_status', connected });
+  clients.browsers.forEach((browser) => {
+    if (browser.readyState === 1) {
+      browser.send(payload);
+    }
+  });
+}
+
 // 静的ファイル配信
 app.use(express.static(join(__dirname, 'public')));
 
@@ -32,6 +41,7 @@ wss.on('connection', (ws, req) => {
   // 初期状態：ブラウザとして登録
   clients.browsers.add(ws);
   console.log(`[Browser] Total browsers: ${clients.browsers.size}`);
+  broadcastEsp32Status(!!clients.esp32);
   
   ws.on('message', (data) => {
     const rawMessage = data.toString();
@@ -56,6 +66,7 @@ wss.on('connection', (ws, req) => {
         const response = { type: 'registered', message: 'ESP32 registered successfully' };
         ws.send(JSON.stringify(response));
         console.log('[ESP32] Sent registration confirmation');
+        broadcastEsp32Status(true);
         return;
       }
       
@@ -109,6 +120,7 @@ wss.on('connection', (ws, req) => {
     if (clients.esp32 === ws) {
       clients.esp32 = null;
       console.log('[ESP32] Disconnected');
+      broadcastEsp32Status(false);
     } else {
       clients.browsers.delete(ws);
       console.log(`[Browser] Disconnected. Remaining: ${clients.browsers.size}`);
