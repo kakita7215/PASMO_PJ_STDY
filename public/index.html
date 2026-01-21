@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -180,21 +180,23 @@ function setTheme(mode) {
     </div>
 
     <h1>🔔 ESP32 Alarm</h1>
+    <div id="currentTime" style="font-size: 44px; font-weight: 600; text-align: center; letter-spacing: 2px; margin: 6px 0 18px;">--:--</div>
     
     <div style="text-align: center; margin-bottom: 20px;">
       <div style="font-size: 14px; color: var(--subtext); margin-bottom: 8px;">設定アラーム時刻</div>
       <div id="nextAlarmTime" style="font-size: 36px; font-weight: 300; letter-spacing: 2px;">--:--</div>
     </div>
     
-    <label>アラーム時刻</label>
+    <label>アラーム時刻
+      <input type="checkbox" id="alarmEnable" style="margin-left: 10px;">
+      <span style="font-weight: 400; font-size: 13px; color: var(--subtext);">アラームを有効にする</span>
+    </label>
     <input type="time" id="alarmTime">
-    
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" id="alarmEnable">
-        アラームを有効にする
-      </label>
-    </div>
+
+    <label class="checkbox">
+      <input type="checkbox" id="snoozeEnable">
+      スヌーズを有効にする
+    </label>
     
     <label>スヌーズ間隔（分）</label>
     <input type="number" id="snoozeInterval" min="1" max="60" value="5">
@@ -202,11 +204,6 @@ function setTheme(mode) {
     <label>スヌーズ回数</label>
     <input type="number" id="snoozeCount" min="1" max="10" value="3">
     
-    <label class="checkbox">
-      <input type="checkbox" id="snoozeEnable">
-      スヌーズを有効にする
-    </label>
-
     <button onclick="sendAlarm()">設定を送信</button>
     <button onclick="sendTimeSync()">時刻同期</button>
   </div>
@@ -217,3 +214,5 @@ function setTheme(mode) {
 
 </body>
 </html>
+
+
