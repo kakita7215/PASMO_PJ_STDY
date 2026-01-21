@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ESP32 Alarm v27.03</title>
+<title>ESP32 Alarm v27.04</title>
 
 <style>
 /* ========= テーマ定義（色のみ） ========= */
@@ -216,22 +216,10 @@ function setTheme(mode) {
     </label>
     <input type="time" id="alarmTime">
 
-    <hr class="section-divider">
-
-    <label class="checkbox">
-      <input type="checkbox" id="snoozeEnable">
-      スヌーズを有効にする
-    </label>
-    
-    <label>スヌーズ間隔（分）</label>
-    <input type="number" id="snoozeInterval" min="1" max="60" value="5">
-    
-    <label>スヌーズ回数</label>
-    <input type="number" id="snoozeCount" min="1" max="10" value="3">
-
-    <div class="day-grid" id="snoozeDays">
-      <label><input type="checkbox" id="snoozeEveryday">毎日</label>
-      <label><input type="checkbox" id="snoozeWeekdays">平日 <span style="font-size: 11px; color: var(--subtext);">(土日祝を除く)</span></label>
+    <label>アラーム曜日</label>
+    <div class="day-grid" id="alarmDays">
+      <label><input type="checkbox" id="alarmEveryday">毎日</label>
+      <label><input type="checkbox" id="alarmWeekdays">平日 <span style="font-size: 11px; color: var(--subtext);">(土日祝を除く)</span></label>
       <span></span>
       <label><input type="checkbox" data-day="mon">月</label>
       <label><input type="checkbox" data-day="tue">火</label>
@@ -241,6 +229,19 @@ function setTheme(mode) {
       <label><input type="checkbox" data-day="sat">土</label>
       <label><input type="checkbox" data-day="sun">日</label>
     </div>
+
+    <hr class="section-divider">
+
+    <label class="checkbox">
+      <input type="checkbox" id="snoozeEnable">
+      スヌーズを有効にする
+    </label>
+
+    <label>スヌーズ間隔（分）</label>
+    <input type="number" id="snoozeInterval" min="1" max="60" value="5">
+
+    <label>スヌーズ回数</label>
+    <input type="number" id="snoozeCount" min="1" max="10" value="3">
     
     <button onclick="sendAlarm()">設定を送信</button>
     <button onclick="sendTimeSync()">時刻同期</button>
