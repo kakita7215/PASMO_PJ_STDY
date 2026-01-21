@@ -127,6 +127,26 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* ========= Display mode buttons ========= */
+.mode-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.mode-buttons button {
+  margin-top: 0;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.mode-buttons button.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
 /* ========= テーマ切替UI ========= */
 .theme {
   margin-bottom: 12px;
@@ -188,7 +208,11 @@ function setTheme(mode) {
     </label>
 
     <button onclick="sendAlarm()">設定を送信</button>
-    <button id="stopButton" onclick="stopAlarm()" style="background: #ef4444; margin-top: 10px;" disabled>アラームを停止</button>
+    <div class="mode-buttons" aria-label="Display mode">
+      <button id="modeClock" class="active" onclick="setDisplayMode('clock')">Clock</button>
+      <button id="modePlayTime" onclick="setDisplayMode('play_time')">Play Time</button>
+      <button id="modeEq" onclick="setDisplayMode('eq')">EQ</button>
+    </div>
   </div>
 
 </div>
