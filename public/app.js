@@ -1,4 +1,4 @@
-﻿// app.js - ESP32 Alarm Client-side JavaScript v13
+﻿// app.js - ESP32 Alarm Client-side JavaScript v27.01
 
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
@@ -6,7 +6,6 @@ const wsUrl = window.location.protocol === 'https:'
 
 let ws;
 let reconnectTimer;
-let currentDisplayMode = "clock";
 
 // ローカルストレージのキー
 const STORAGE_KEYS = {
@@ -196,35 +195,8 @@ function sendAlarm() {
 
   showStatus("送信中...", "info");
 }
+\n\nfunction sendTimeSync() {\n  if (!ws || ws.readyState !== WebSocket.OPEN) {\n    showStatus("サーバーに接続されていません", "error");\n    return;\n  }\n\n  ws.send(JSON.stringify({ type: "time_sync" }));\n  showStatus("時刻同期を要求しました", "info");\n}\n
 
-
-function updateDisplayModeButtons() {
-  const clockBtn = document.getElementById("modeClock");
-  const playTimeBtn = document.getElementById("modePlayTime");
-  const eqBtn = document.getElementById("modeEq");
-  if (!clockBtn || !playTimeBtn || !eqBtn) return;
-
-  clockBtn.classList.toggle("active", currentDisplayMode === "clock");
-  playTimeBtn.classList.toggle("active", currentDisplayMode === "play_time");
-  eqBtn.classList.toggle("active", currentDisplayMode === "eq");
-}
-
-function setDisplayMode(mode) {
-  if (!ws || ws.readyState !== WebSocket.OPEN) {
-    showStatus("サーバーに接続されていません", "error");
-    return;
-  }
-
-  currentDisplayMode = mode;
-  updateDisplayModeButtons();
-
-  ws.send(JSON.stringify({
-    type: "display_mode",
-    mode: mode
-  }));
-
-  showStatus("表示モードを送信しました", "info");
-}
 window.addEventListener("load", () => {
   loadSettings();
   connect();
