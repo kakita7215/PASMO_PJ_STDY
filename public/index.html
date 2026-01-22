@@ -150,7 +150,6 @@ input[type="number"] {
 .day-grid .day-span-5 { grid-column: span 5; }
 .day-grid .day-nowrap { white-space: nowrap; }
 
-.day-grid .day-spacer { visibility: hidden; }
 
 button {
   width: 100%;
@@ -227,11 +226,6 @@ function setTheme(mode) {
     <div class="day-grid" id="alarmDays">
       <label class="day-span-2 day-nowrap"><input type="checkbox" id="alarmEveryday">毎日</label>
       <label class="day-span-5 day-nowrap"><input type="checkbox" id="alarmWeekdays">平日 (土日祝を除く)</label>
-      <span class="day-spacer"></span>
-      <span class="day-spacer"></span>
-      <span class="day-spacer"></span>
-      <span class="day-spacer"></span>
-      <span class="day-spacer"></span>
       <label><input type="checkbox" data-day="mon">月</label>
       <label><input type="checkbox" data-day="tue">火</label>
       <label><input type="checkbox" data-day="wed">水</label>
