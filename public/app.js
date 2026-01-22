@@ -1,4 +1,4 @@
-// app.js - ESP32 Alarm Client-side JavaScript v27.04
+// app.js - ESP32 Alarm Client-side JavaScript v27.06
 
 const wsUrl = window.location.protocol === 'https:' 
   ? `wss://${window.location.host}`
@@ -12,6 +12,7 @@ const STORAGE_KEYS = {
   alarmTime: 'esp32_alarm_time',
   alarmEnable: 'esp32_alarm_enable',
   alarmDays: 'esp32_alarm_days',
+  alarmWeekdays: 'esp32_alarm_weekdays',
   snoozeEnable: 'esp32_snooze_enable',
   snoozeInterval: 'esp32_snooze_interval',
   snoozeCount: 'esp32_snooze_count'
@@ -24,6 +25,7 @@ function saveSettings() {
   localStorage.setItem(STORAGE_KEYS.alarmTime, document.getElementById('alarmTime').value);
   localStorage.setItem(STORAGE_KEYS.alarmEnable, document.getElementById('alarmEnable').checked);
   localStorage.setItem(STORAGE_KEYS.alarmDays, JSON.stringify(getAlarmDays()));
+  localStorage.setItem(STORAGE_KEYS.alarmWeekdays, document.getElementById('alarmWeekdays').checked);
   localStorage.setItem(STORAGE_KEYS.snoozeEnable, document.getElementById('snoozeEnable').checked);
   localStorage.setItem(STORAGE_KEYS.snoozeInterval, document.getElementById('snoozeInterval').value);
   localStorage.setItem(STORAGE_KEYS.snoozeCount, document.getElementById('snoozeCount').value);
@@ -35,12 +37,14 @@ function loadSettings() {
   const alarmTime = localStorage.getItem(STORAGE_KEYS.alarmTime);
   const alarmEnable = localStorage.getItem(STORAGE_KEYS.alarmEnable);
   const alarmDays = localStorage.getItem(STORAGE_KEYS.alarmDays);
+  const alarmWeekdays = localStorage.getItem(STORAGE_KEYS.alarmWeekdays);
   const snoozeEnable = localStorage.getItem(STORAGE_KEYS.snoozeEnable);
   const snoozeInterval = localStorage.getItem(STORAGE_KEYS.snoozeInterval);
   const snoozeCount = localStorage.getItem(STORAGE_KEYS.snoozeCount);
   
   if (alarmTime) document.getElementById('alarmTime').value = alarmTime;
   if (alarmEnable !== null) document.getElementById('alarmEnable').checked = (alarmEnable === 'true');
+  if (alarmWeekdays !== null) document.getElementById('alarmWeekdays').checked = (alarmWeekdays === 'true');
   if (alarmDays) {
     try {
       const parsed = JSON.parse(alarmDays);
@@ -77,13 +81,8 @@ function setAlarmDays(days) {
 function updateAlarmGroupChecks() {
   const days = getAlarmDays();
   const everydayEl = document.getElementById("alarmEveryday");
-  const weekdaysEl = document.getElementById("alarmWeekdays");
   if (everydayEl) {
     everydayEl.checked = ALARM_DAY_KEYS.every((day) => days[day]);
-  }
-  if (weekdaysEl) {
-    const weekdays = ["mon", "tue", "wed", "thu", "fri"];
-    weekdaysEl.checked = weekdays.every((day) => days[day]);
   }
 }
 
@@ -120,6 +119,12 @@ function bindAlarmDayControls() {
     weekdaysEl.addEventListener("change", (e) => {
       if (e.target.checked) {
         applyWeekdays();
+      } else {
+        const weekdays = ["mon", "tue", "wed", "thu", "fri"];
+        weekdays.forEach((day) => {
+          const el = document.querySelector(`[data-day="${day}"]`);
+          if (el) el.checked = false;
+        });
       }
       if (everydayEl) everydayEl.checked = false;
       saveSettings();
@@ -264,6 +269,7 @@ function sendAlarm() {
     hour: hour,
     minute: minute,
     days: getAlarmDays(),
+    weekdays: document.getElementById("alarmWeekdays").checked,
     enable: document.getElementById("alarmEnable").checked,
     snooze: {
       enable: document.getElementById("snoozeEnable").checked,
