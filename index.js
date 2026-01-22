@@ -1,4 +1,4 @@
-﻿// index.js - ESP32 Alarm Server-side JavaScript v27.02
+// index.js - ESP32 Alarm Server-side JavaScript v27.05
 
 import express from 'express';
 import { WebSocketServer } from 'ws';
@@ -21,6 +21,45 @@ const clients = {
   esp32: null,
   browsers: new Set()
 };
+
+const HOLIDAY_API = 'https://holidays-jp.github.io/api/v1/date.json';
+const HOLIDAY_REFRESH_MS = 12 * 60 * 60 * 1000;
+let holidayDates = [];
+let holidayLastUpdated = null;
+
+function sendHolidayDates(ws) {
+  const payload = JSON.stringify({
+    type: 'holidays',
+    dates: holidayDates,
+    updated: holidayLastUpdated
+  });
+  ws.send(payload);
+}
+
+async function refreshHolidays() {
+  try {
+    const res = await fetch(HOLIDAY_API);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const data = await res.json();
+    const now = new Date();
+    const years = new Set([now.getFullYear(), now.getFullYear() + 1]);
+    holidayDates = Object.keys(data)
+      .filter((date) => years.has(Number(date.slice(0, 4))))
+      .sort();
+    holidayLastUpdated = new Date().toISOString();
+    console.log(`[Holiday] Loaded ${holidayDates.length} dates`);
+    if (clients.esp32 && clients.esp32.readyState === 1) {
+      sendHolidayDates(clients.esp32);
+    }
+  } catch (error) {
+    console.error('[Holiday] Fetch failed:', error);
+  }
+}
+
+refreshHolidays();
+setInterval(refreshHolidays, HOLIDAY_REFRESH_MS);
 
 function broadcastEsp32Status(connected) {
   const payload = JSON.stringify({ type: 'esp32_status', connected });
@@ -67,6 +106,9 @@ wss.on('connection', (ws, req) => {
         ws.send(JSON.stringify(response));
         console.log('[ESP32] Sent registration confirmation');
         broadcastEsp32Status(true);
+        if (holidayDates.length > 0) {
+          sendHolidayDates(ws);
+        }
         return;
       }
       
