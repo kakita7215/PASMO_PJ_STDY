@@ -131,7 +131,7 @@ input[type="number"] {
 
 .day-grid {
   display: grid;
-  grid-template-columns: max-content max-content repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 8px;
   margin-top: 10px;
   font-size: 13px;
@@ -146,13 +146,9 @@ input[type="number"] {
   white-space: normal;
 }
 
-.day-grid .day-wide {
-  white-space: nowrap;
-}
-
-.day-grid .day-nowrap {
-  white-space: nowrap;
-}
+.day-grid .day-span-2 { grid-column: span 2; }
+.day-grid .day-span-5 { grid-column: span 5; }
+.day-grid .day-nowrap { white-space: nowrap; }
 
 .day-grid .day-spacer { visibility: hidden; }
 
@@ -229,8 +225,8 @@ function setTheme(mode) {
 
     <label>アラーム曜日</label>
     <div class="day-grid" id="alarmDays">
-      <label class="day-nowrap"><input type="checkbox" id="alarmEveryday">毎日</label>
-      <label class="day-wide"><input type="checkbox" id="alarmWeekdays">平日 (土日祝を除く)</label>
+      <label class="day-span-2 day-nowrap"><input type="checkbox" id="alarmEveryday">毎日</label>
+      <label class="day-span-5 day-nowrap"><input type="checkbox" id="alarmWeekdays">平日 (土日祝を除く)</label>
       <span class="day-spacer"></span>
       <span class="day-spacer"></span>
       <span class="day-spacer"></span>
