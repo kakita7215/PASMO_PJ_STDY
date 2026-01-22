@@ -132,6 +132,11 @@ input[type="number"] {
 .day-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "everyday weekdays weekdays"
+    "mon tue wed"
+    "thu fri sat"
+    "sun empty1 empty2";
   gap: 8px;
   margin-top: 10px;
   font-size: 13px;
@@ -147,9 +152,20 @@ input[type="number"] {
 }
 
 .day-grid .day-wide {
-  grid-column: span 2;
+  grid-area: weekdays;
   white-space: nowrap;
 }
+
+.day-grid .day-everyday { grid-area: everyday; }
+.day-grid .day-mon { grid-area: mon; }
+.day-grid .day-tue { grid-area: tue; }
+.day-grid .day-wed { grid-area: wed; }
+.day-grid .day-thu { grid-area: thu; }
+.day-grid .day-fri { grid-area: fri; }
+.day-grid .day-sat { grid-area: sat; }
+.day-grid .day-sun { grid-area: sun; }
+.day-grid .day-empty-1 { grid-area: empty1; }
+.day-grid .day-empty-2 { grid-area: empty2; }
 
 button {
   width: 100%;
@@ -224,18 +240,17 @@ function setTheme(mode) {
 
     <label>アラーム曜日</label>
     <div class="day-grid" id="alarmDays">
-      <label><input type="checkbox" id="alarmEveryday">毎日</label>
+      <label class="day-everyday"><input type="checkbox" id="alarmEveryday">毎日</label>
       <label class="day-wide"><input type="checkbox" id="alarmWeekdays">平日 (土日祝を除く)</label>
-      <span></span>
-      <label><input type="checkbox" data-day="mon">月</label>
-      <label><input type="checkbox" data-day="tue">火</label>
-      <label><input type="checkbox" data-day="wed">水</label>
-      <label><input type="checkbox" data-day="thu">木</label>
-      <label><input type="checkbox" data-day="fri">金</label>
-      <label><input type="checkbox" data-day="sat">土</label>
-      <label><input type="checkbox" data-day="sun">日</label>
-      <span></span>
-      <span></span>
+      <label class="day-mon"><input type="checkbox" data-day="mon">月</label>
+      <label class="day-tue"><input type="checkbox" data-day="tue">火</label>
+      <label class="day-wed"><input type="checkbox" data-day="wed">水</label>
+      <label class="day-thu"><input type="checkbox" data-day="thu">木</label>
+      <label class="day-fri"><input type="checkbox" data-day="fri">金</label>
+      <label class="day-sat"><input type="checkbox" data-day="sat">土</label>
+      <label class="day-sun"><input type="checkbox" data-day="sun">日</label>
+      <span class="day-empty-1"></span>
+      <span class="day-empty-2"></span>
     </div>
 
     <hr class="section-divider">
