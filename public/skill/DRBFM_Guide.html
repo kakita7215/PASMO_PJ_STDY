@@ -1,0 +1,411 @@
+<!doctype html><html lang='ja'><head><meta charset='utf-8'><title>DRBFMの道標（不具合モード編）</title><style>
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+       margin: 24px; line-height: 1.5; }
+h1 { font-size: 20px; margin-top: 0; }
+.title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+.subtitle { font-size: 16px; margin: 2px 0; }
+table { border-collapse: collapse; width: 100%; margin: 10px 0 18px; table-layout: fixed; }
+th, td { border: 1px solid #333; padding: 8px 10px; vertical-align: top; word-wrap: break-word; }
+th { background: #eee; font-weight: 700; text-align: center; }
+.small { font-size: 13px; }
+.page { page-break-before: always; break-before: page; margin-top: 0; }
+@media print { .page { page-break-before: always; } }
+</style></head><body>
+<div class='title'>DRBFMの道標</div>
+<div class='subtitle'>創造的DRBFMを進めるための携帯版手引書</div>
+<div class='subtitle'>～不具合モード編～</div>
+<div class='subtitle'>2008年10月3日</div>
+<h1>1.作成の主旨</h1>
+<div class='small'>・より創造的なDRBFMを進め、未然防止を図るには、いかに多くの心配点(故障モード)を考え出すかが重要です。<br>
+<br>
+そこで、今回携帯型の故障モード一覧表を作成しました。DRBFM実施時に活用されることを希望します。</div>
+<h1>2.DRBFMの心</h1>
+<div class='small'>・変更点、変化点に着眼して、GD3(Good Design, Good Discussion, Good Design Review)により見えていない問題の“芽”を発見し、開発の早い段階で未然防止を図り、図面品質を向上させる。</div>
+<h1>3.ワークシートと注意</h1>
+<div class='small'>SAランクワークシート<br>
+<br>
+①②③④⑤⑥⑦⑧⑨⑩⑪</div>
+<table><thead><tr><th style='width: 22%'>項目</th><th>内容</th></tr></thead><tbody>
+<tr><td class='small'>①変更点・変化点</td><td class='small'>・議論の対象が明確になっているか。<br>
+<br>
+・変更点、変化点が具体的になっているか。<br>
+<br>
+・変更部位、構造、部品、材料、工法、変化点(使用環境条件等)が明確か。<br>
+<br>
+・比較すべき対象は、明確か。</td></tr>
+<tr><td class='small'>②機能</td><td class='small'>・議論の対象物(システム、部品、要素)の機能が、具体的に且つもれなく摘出されているか。(要求特性は、定量的か)</td></tr>
+<tr><td class='small'>③心配点(故障モード)</td><td class='small'>・変更点/変化点に着目。機能を損なう心配点(故障モード)がもれなく整理(グループ化)されているか。お客さまの視点から使用環境を考え、心配点を網羅しているか。</td></tr>
+<tr><td class='small'>④原因要因</td><td class='small'>・なぜなぜを繰り返し、真の原因まで掘り下げているか。<br>
+<br>
+・機能を損なう現象が頭の中にイメージできるまで、掘り下げているか。</td></tr>
+<tr><td class='small'>⑤お客様への影響</td><td class='small'>・お客様の視点から影響度合いを検討しているか。(後工程もお客様)</td></tr>
+<tr><td class='small'>⑥どんな設計</td><td class='small'>・心配点の原因にあげられた項目に対し、設計段階で実施した内容が対応付けて整理されているか。(設計計算、標準類、チェックシート(再発防止)の確認が完了しているか。)</td></tr>
+<tr><td class='small'>⑦設計へ反映、⑧評価へ反映、⑨工程へ反映</td><td class='small'>・心配点の原因に上げられた項目に対し、それぞれの項目を解決できる具体的、定量的な方法が決まっているのか。<br>
+<br>
+・原因に上げられた項目との因果関係は明確か。<br>
+<br>
+・関係部署(設計、評価、製造他)が協力して問題解決を行う内容となっているか。</td></tr>
+<tr><td class='small'>⑩担当・期限</td><td class='small'>・問題解決のため、対応方法の各項目について担当者、期限が明確になっているか。</td></tr>
+<tr><td class='small'>⑪結果</td><td class='small'>対応方法の各項目について、その結果<br>
+がフォローされているか。</td></tr>
+<tr><td class='small'>⑫メンバー</td><td class='small'>DRに参加するメンバーは、問題解決の<br>
+議論に必要な部署から参加しているか。<br>
+(設計、実験、材料、品保、品管、調達、<br>
+生技、EQ、Z、分野AE＆エキスパート、MBP等)</td></tr>
+</tbody></table>
+<div class='page'></div>
+<h1>第1部 使用環境と予想される不具合現象</h1>
+<table><thead><tr><th colspan='2'>ストレス</th><th>主な不具合現象</th></tr></thead><tbody>
+<tr><td class='small' rowspan='8'>静的負荷</td><td class='small'>・組付荷重(引張圧縮、曲げ、捻り)</td><td class='small' rowspan='8'>クリープ破壊<br>
+延性破壊<br>
+遅れ破壊<br>
+SCC<br>
+ESC<br>
+変形<br>
+緩み</td></tr>
+<tr><td class='small'>・車両取付け方向(自重の影響)</td></tr>
+<tr><td class='small'>・凍結による体積膨張(氷)</td></tr>
+<tr><td class='small'>・密閉液の熱膨張</td></tr>
+<tr><td class='small'>・腐食生成物の成長による押上げ・熱収縮</td></tr>
+<tr><td class='small'>・残留応力(かしめ、溶接、ねじ締結、熱処理、圧入、冷間鍛造、プレス曲げ、インサート成形部)</td></tr>
+<tr><td class='small'>・セット荷重(ばね反力など)・磁力・熱荷重</td></tr>
+<tr><td class='small'>・静圧・大気圧・重力</td></tr>
+<tr><td class='small' rowspan='13'>動的負荷</td><td class='small'>・E/G振動</td><td class='small' rowspan='13'>疲労破壊<br>
+熱疲労破壊<br>
+変形、干渉<br>
+摩耗<br>
+接点チャタリングによる誤操作</td></tr>
+<tr><td class='small'>・走行振動(路面振動)</td></tr>
+<tr><td class='small'>・圧力変動(液圧、油圧、冷媒圧、吸気圧、排気脈動)</td></tr>
+<tr><td class='small'>・接圧変動(摺動部)</td></tr>
+<tr><td class='small'>・曲げ荷重</td></tr>
+<tr><td class='small'>・捻り荷重(回転体)</td></tr>
+<tr><td class='small'>・引張圧縮荷重</td></tr>
+<tr><td class='small'>・操作力・流速変動</td></tr>
+<tr><td class='small'>・ベルトテンション</td></tr>
+<tr><td class='small'>・共振・走行風</td></tr>
+<tr><td class='small'>・洗車機の風圧、水圧、ブラシ・自動振動</td></tr>
+<tr><td class='small'>・遠心力・熱荷重変動(膨張&lt;=&gt;収縮)</td></tr>
+<tr><td class='small'>・磁力変動・搬送時の振動(工程)・輸送振動(貨車、トレーラ、船)</td></tr>
+<tr><td class='small' rowspan='14'>高温</td><td class='small'>・E/G系直熱(熱伝導)</td><td class='small' rowspan='14'>クリープ変形<br>
+高温酸化<br>
+摺動不良<br>
+絶縁劣化<br>
+熱疲労破壊<br>
+素子破壊<br>
+熱変形<br>
+物性・特性変化<br>
+溶損<br>
+強度劣化<br>
+巻線皮膜剥れ<br>
+ウイルス発生→ショート<br>
+FH</td></tr>
+<tr><td class='small'>・E/G系輻射熱</td></tr>
+<tr><td class='small'>・ブレーキ輻射熱</td></tr>
+<tr><td class='small'>・季節要因(夏)</td></tr>
+<tr><td class='small'>・炎天下放置(車室内)</td></tr>
+<tr><td class='small'>・市街地走行(渋滞走行)</td></tr>
+<tr><td class='small'>・照明器具輻射熱</td></tr>
+<tr><td class='small'>・製品自己発熱(ゴム、樹脂)</td></tr>
+<tr><td class='small'>・地域要因(海外)</td></tr>
+<tr><td class='small'>・太陽直射熱・摺動発熱</td></tr>
+<tr><td class='small'>・路面輻射熱(夏)</td></tr>
+<tr><td class='small'>・ホットソーク</td></tr>
+<tr><td class='small'>・はんだ付等接合時の熱(工程)・成形、加工時の熱(工程)・高温検査時の熱(工程)</td></tr>
+<tr><td class='small'>・束になった配線(発熱)</td></tr>
+<tr><td class='small' rowspan='3'>低温</td><td class='small'>・地域要因(海外)</td><td class='small' rowspan='3'>低温脆性<br>
+凍結・氷結<br>
+物性・特性変化<br>
+シール性低下<br>
+摺動不良</td></tr>
+<tr><td class='small'>・季節要因(冬)</td></tr>
+<tr><td class='small'>・低温検査時(工程)</td></tr>
+<tr><td class='small' rowspan='3'>冷熱</td><td class='small'>・作動繰り返し</td><td class='small' rowspan='3'>熱疲労破壊<br>
+劣化</td></tr>
+<tr><td class='small'>・通電ON&lt;=&gt;OFF</td></tr>
+<tr><td class='small'>・季節変動</td></tr>
+<tr><td class='small' rowspan='2'>日射</td><td class='small'>・紫外線</td><td class='small' rowspan='2'>劣化、変色</td></tr>
+<tr><td class='small'>・赤外線</td></tr>
+<tr><td class='small' rowspan='7'>温度 (水蒸気)</td><td class='small'>・季節要因</td><td class='small' rowspan='7'>マイグレーション→ショート<br>
+物性変化<br>
+腐食<br>
+氷結により接点障害<br>
+絶縁低下<br>
+結露、くもり</td></tr>
+<tr><td class='small'>・地域要因(海外)</td></tr>
+<tr><td class='small'>・船内湿気(輸送)</td></tr>
+<tr><td class='small'>・吸気、排気系管内湿度</td></tr>
+<tr><td class='small'>・巻込み雪→融解</td></tr>
+<tr><td class='small'>・高温部被水→蒸発</td></tr>
+<tr><td class='small'>・内外気等温度差による結露</td></tr>
+<tr><td class='small' rowspan='14'>雰囲気</td><td class='small'>・消臭剤・芳香剤</td><td class='small' rowspan='14'>ESC<br>
+異臭、くもり<br>
+オゾン劣化<br>
+接点障害<br>
+変色、くもり<br>
+劣化、腐食<br>
+接点障害<br>
+腐食</td></tr>
+<tr><td class='small'>・内装品の揮発成分(添加物、難燃剤等)</td></tr>
+<tr><td class='small'>・オゾン</td></tr>
+<tr><td class='small'>・タバコの煙</td></tr>
+<tr><td class='small'>・EGRガス</td></tr>
+<tr><td class='small'>・ブローバイガス</td></tr>
+<tr><td class='small'>・温泉地帯(ガス)</td></tr>
+<tr><td class='small'>・海岸地帯(潮)</td></tr>
+<tr><td class='small'>・揮発オイルガス</td></tr>
+<tr><td class='small'>・オイルミスト</td></tr>
+<tr><td class='small'>・融雪塩を含むミスト</td></tr>
+<tr><td class='small'>・排気ガス、冷媒ガス</td></tr>
+<tr><td class='small'>・Si系接着剤、ゴムなどからのSi揮散</td></tr>
+<tr><td class='small'>・硫黄架橋ゴムからの硫黄揮散</td></tr>
+<tr><td class='small' rowspan='15'>取扱い</td><td class='small'>・3次元的動作(斜め操作・挿入など)</td><td class='small' rowspan='15'>干渉<br>
+キズ<br>
+キズ<br>
+衝撃破壊<br>
+ショート<br>
+破壊</td></tr>
+<tr><td class='small'>・タイヤチェーン取付け</td></tr>
+<tr><td class='small'>・エアロパーツ取付け</td></tr>
+<tr><td class='small'>・ペン押し(SW)</td></tr>
+<tr><td class='small'>・拭く、擦る</td></tr>
+<tr><td class='small'>・衝突・ドア閉時</td></tr>
+<tr><td class='small'>・エンジンフード閉時</td></tr>
+<tr><td class='small'>・トランクフード閉時</td></tr>
+<tr><td class='small'>・インパクトレンチ(工程)</td></tr>
+<tr><td class='small'>・ノブボタン(シフト、PKBレバー)ハジキ操作</td></tr>
+<tr><td class='small'>・飲料水等こぼし</td></tr>
+<tr><td class='small'>・水没(下回り部品、キーなど)・投げる(キー)</td></tr>
+<tr><td class='small'>・落下(キー)・踏む(キー)</td></tr>
+<tr><td class='small'>・蹴る(シート下製品など)</td></tr>
+<tr><td class='small'>・叩く・キャリア取付け</td></tr>
+<tr><td class='small' rowspan='15'>電気</td><td class='small'>・EMI(電磁波妨害)</td><td class='small' rowspan='15'>誤作動<br>
+RAM・ROMの誤作動<br>
+データ化け<br>
+誤作動<br>
+素子破壊<br>
+素子破壊<br>
+誤作動<br>
+リレー・ホールセンサ誤作動<br>
+OFFバウンス→接点溶着</td></tr>
+<tr><td class='small'>・雷・停電(バッテリ脱着、コネクタ瞬断)</td></tr>
+<tr><td class='small'>・電源チャタリング(IG SW)</td></tr>
+<tr><td class='small'>・クランキングによる電圧低下</td></tr>
+<tr><td class='small'>・バッテリー劣化(電圧低下)</td></tr>
+<tr><td class='small'>・モータ・ソレノイド等OFF時の環流電流</td></tr>
+<tr><td class='small'>・突入電流による電源落ち込み</td></tr>
+<tr><td class='small'>・モータ等の逆起電圧</td></tr>
+<tr><td class='small'>・α線</td></tr>
+<tr><td class='small'>・静電気</td></tr>
+<tr><td class='small'>・モータ・ソレノイド等OFF時のサージ電圧</td></tr>
+<tr><td class='small'>・モータロック電流</td></tr>
+<tr><td class='small'>・容量負荷の突入電流</td></tr>
+<tr><td class='small'>・磁気(モータ、スピーカなど)</td></tr>
+<tr><td class='small'>・リレー復帰電圧</td></tr>
+<tr><td class='small' rowspan='4'>その他</td><td class='small'>・ねずみ、テン等の侵入</td><td class='small' rowspan='4'>かじり<br>
+ショート、詰り<br>
+破損<br>
+変色</td></tr>
+<tr><td class='small'>・虫の侵入</td></tr>
+<tr><td class='small'>・バクテリア発生</td></tr>
+<tr><td class='small'>・かび発生</td></tr>
+</tbody></table>
+<div class='page'></div>
+<h1>第2部 機械系故障モードの例</h1>
+<table><thead><tr><th style='width: 20%'>故障モード</th><th>例</th></tr></thead><tbody>
+<tr><td class='small'>破壊(亀裂)</td><td class='small'>・オゾンクラック・加水分解<br>
+・環境応力割れ(ESC)<br>
+・紫外線劣化亀裂・衝撃破壊<br>
+・溶剤劣化亀裂(ソルベントクラック)<br>
+・熱衝撃破壊<br>
+・腐食による破壊、強度低下<br>
+・応力腐食割れ(SCC)・遅れ破壊<br>
+・延性破壊・干渉による破壊<br>
+・強度低下・クリープ破壊<br>
+・脆性破壊(低温脆性)・溶損<br>
+・熱疲労破壊・疲労破壊</td></tr>
+<tr><td class='small'>変形</td><td class='small'>・熱変形<br>
+・表面のヒケ、くぼみ(Sink Mark)<br>
+・膨潤・クリープ(へたり)・残留歪み<br>
+・塑性変形(降伏)・摩耗による変形<br>
+・成形収縮・吸湿による変形</td></tr>
+<tr><td class='small'>緩み(外れ)</td><td class='small'>・異物噛み込み締結による緩み(異物のクリープ)<br>
+・クリープによる保持力低下<br>
+・締結面の平面度不良により、隙間を抑える締付による緩み(隙間抑え力がクリープ)<br>
+・半嵌合による外れ<br>
+・摩耗による保持力低下<br>
+・外力に対する保持力不足<br>
+・熱収縮(膨張)による保持力低下</td></tr>
+<tr><td class='small'>剥れ</td><td class='small'>・塗装剥れ・摩耗による塗装剥れ<br>
+・静荷重による剥れ・接着強度低下<br>
+・熱疲労による接着面剥れ<br>
+・疲労による接着面剥れ</td></tr>
+<tr><td class='small'>摺動抵抗(大or小)</td><td class='small'>・干渉による摺動抵抗<br>
+・摺動面損傷(腐食、剥離、摩耗)による摺動抵抗増加<br>
+・摺動面剥離による摺動抵抗大<br>
+・潤滑油粘性上昇による摺動抵抗大<br>
+・潤滑油粘性低下による接触抵抗大(油膜切れ)<br>
+・摩耗による摺動抵抗増加、ガタ付き、振れ大<br>
+・異物による摺動抵抗増加<br>
+・潤滑剤減少による摺動抵抗増加(油膜切れ)<br>
+・潤滑不良による摺動抵抗増加<br>
+・摺動部が組付け外力等により変形し摺動抵抗増加<br>
+・熱膨張(熱収縮)によりクリアランスが低下し摺動抵抗増加</td></tr>
+<tr><td class='small'>固着(摺動以外)</td><td class='small'>・干渉によるロック<br>
+・ゴムと金属等との固着<br>
+・氷結による固着・溶着<br>
+・腐食による固着<br>
+・抽出物(膨潤)による固着<br>
+・飲料水付着(糖分固着)</td></tr>
+<tr><td class='small'>摩耗</td><td class='small'>・電気的摩耗(アークによるもの)<br>
+・開閉繰返しによる接点摩耗<br>
+・異物混入による摩耗<br>
+・干渉による摩耗<br>
+・摺動繰返しによる摩耗<br>
+・フレッティング摩耗</td></tr>
+<tr><td class='small'>干渉</td><td class='small'>・イレギュラーな使い方による干渉<br>
+・コーナー角部担ぎ(部品間組付け)<br>
+・部品間の相対熱膨張でクリアランスが低下し干渉・異物との干渉<br>
+・外力により変形し干渉<br>
+・振動により部品が振れて干渉(W/H、配管振れなど)<br>
+・組付け(溶接、圧入位置なども含む)バラツキによる干渉<br>
+・吸湿による膨張</td></tr>
+<tr><td class='small'>洩れ</td><td class='small'>・異物噛み込みによるシール洩れ<br>
+・鋳巣による洩れ・液体透過<br>
+・気体透過<br>
+・シール材劣化(へたり、亀裂)<br>
+・シール性低下・シール不良<br>
+・シール摩耗による洩れ<br>
+・破壊による洩れ<br>
+・腐食による洩れ</td></tr>
+<tr><td class='small'>詰り</td><td class='small'>・ゴム内管軟化膨潤による閉塞<br>
+・異物による詰り<br>
+・凍結(固体化)による詰り<br>
+・カーボン堆積<br>
+・化合物(添加物)の堆積</td></tr>
+<tr><td class='small'>異音</td><td class='small'>・共振による振動・自励振動<br>
+・伝達による振動<br>
+・干渉による異音、打音</td></tr>
+</tbody></table>
+<div class='page'></div>
+<h1>第3部 化学系故障モードの例</h1>
+<table><thead><tr><th style='width: 20%'>故障モード</th><th>例</th></tr></thead><tbody>
+<tr><td class='small'>腐食</td><td class='small'>・ガス腐食・高温酸化・隙間腐食<br>
+・劣化オイルによる腐食<br>
+・電位差腐食(異種金属FeXAl、酸素濃度、局部電池)<br>
+・フレッティングコロージョン</td></tr>
+<tr><td class='small'>劣化</td><td class='small'>・異物混入・物性変化<br>
+・オゾン劣化・機械的剪断劣化<br>
+・酸化劣化・熱劣化・金属接触劣化(例:配管類Cuイオン抽出)<br>
+・紫外線劣化・浸漬劣化</td></tr>
+<tr><td class='small'>変色</td><td class='small'>・光沢劣化(チョーキング)・塗膜汚染<br>
+・熱劣化・被液による劣化変色<br>
+・光劣化<br>
+・テンパカラー(熱処理による)</td></tr>
+<tr><td class='small'>くもり(透過せず)</td><td class='small'>・腐食による変色<br>
+・顔料、接着剤透過<br>
+・黄変(ゴムからの硫黄揮散)<br>
+・異物付着(汚れ)・ウインドの傷つき<br>
+・結露によるくもり<br>
+・チョーキング(ウインド変色)<br>
+・氷結、霜によるくもり<br>
+・フォギング(可塑剤抽出、霞み現象)</td></tr>
+<tr><td class='small'>悪臭</td><td class='small'>・可塑剤抽出・異物付着(汚れ)<br>
+・酸化物・難燃剤の変質</td></tr>
+</tbody></table>
+<div class='page'></div>
+<h1>第4部 電気系故障モード例</h1>
+<table><thead><tr><th style='width: 20%'>故障モード</th><th>例</th></tr></thead><tbody>
+<tr><td class='small'>オープン</td><td class='small'>・アース浮き<br>
+・導体パターン溶断<br>
+・腐食による断線<br>
+・着水による断線<br>
+・半嵌合による外れ<br>
+・アークによる接点酸化<br>
+・接点氷結<br>
+・摺動摩耗粉乗り上げ<br>
+・接点不足による抵抗増加<br>
+・絶縁皮膜(AgS・SiO)形成<br>
+・フレッティング摩耗(酸化摩耗粉生成)<br>
+・半田クラック</td></tr>
+<tr><td class='small'>ショート</td><td class='small'>・導電性異物、不純物(例:CU酸化物)付着・マイグレーション(被水、結露による)<br>
+・干渉によるショート<br>
+・トラッキング(樹脂炭化により絶縁抵抗低下)<br>
+・レアショート(巻線皮膜剥れ)<br>
+・接点溶着<br>
+・吸湿による絶縁低下<br>
+・ウィスカの成長</td></tr>
+<tr><td class='small'>FH</td><td class='small'>・過電流による発熱<br>
+・サージにより入力抵抗熱損<br>
+・連続通電による発熱(開閉接点溶着)</td></tr>
+<tr><td class='small'>素子破壊</td><td class='small'>・干渉によるチップ素子破壊<br>
+・基盤変形によるチップ素子破壊<br>
+・パッケージクラック<br>
+・静電気破壊(ESD)<br>
+・ショート破壊</td></tr>
+<tr><td class='small'>誤作動(ハード)</td><td class='small'>・過電圧印加・電圧低下<br>
+・中間電位・電源発振<br>
+・チャタリングによる誤作動<br>
+・磁気による誤作動(EMI)<br>
+・ノイズによる誤作動<br>
+・回り込み回路形成<br>
+・温度特性によりリーク電流増加</td></tr>
+<tr><td class='small'>誤作動(ソフト)</td><td class='small'>・低電圧時誤作動<br>
+・電源の立上りタイミング違いにより誤作動<br>
+・処理時間オーバーにより誤作動<br>
+・各ECU間のGNDの電位差により誤作動<br>
+・通信線のショート、オープンにより誤作動<br>
+・電圧低下、中間電位、電圧流動<br>
+・ノイズによる誤作動<br>
+・チャタリングによる誤作動</td></tr>
+</tbody></table>
+<div class='page'></div>
+<h1>第5部 ソフトウェアDRBFMの観点</h1>
+<table><thead><tr><th style='width: 18%'>大分類</th><th style='width: 18%'>小分類</th><th>DRBFM実施時の観点</th></tr></thead><tbody>
+<tr><td class='small'>全般</td><td class='small'></td><td class='small'>・誤作動しないか<br>
+・フェイルセーフ(ガード)が動くか<br>
+・復帰するか(デッドロックしないか)</td></tr>
+<tr><td class='small'>ハード</td><td class='small'>ノイズ</td><td class='small'>・IG OFF&lt;-&gt;ONのチャタリング、点灯ノイズ<br>
+・静電気</td></tr>
+<tr><td class='small'>ハード</td><td class='small'>電源変動</td><td class='small'>・IG OFF&lt;-&gt;ON、エンジン始動(クランキング)<br>
+・大電流アクチュエーター作動、瞬断<br>
+・各ECM間のGNDの電位差<br>
+・IG OFF-&gt;ON-&gt;OFFでIG1(ECU)IG2(センサ)別系統から電流を取っている場合、電源の立上り、立下りの時間差</td></tr>
+<tr><td class='small'>ハード</td><td class='small'>IC仕様</td><td class='small'>・CPU通信IC等の仕様とソフトの整合(特に以上処理)</td></tr>
+<tr><td class='small'>ハード</td><td class='small'>ハード</td><td class='small'>・ハードとソフトのI/F整合<br>
+・ECU間、IC間の電源ORリセットの立ち上り、立下りの時間差<br>
+・公差ばらつき(温度、製造)に対する考慮</td></tr>
+<tr><td class='small'>要求仕様プログラム</td><td class='small'>処理(タスク台)</td><td class='small'>・処理タイミング、処置時間(遅れ)、処理順序<br>
+・配置場所、優先順位<br>
+・以上処理<br>
+・フェイルセーフ処理(デッドロックしないか)<br>
+・仕向け違い、オプション設定等による整合性</td></tr>
+<tr><td class='small'>要求仕様プログラム</td><td class='small'>データ(フラグ台)</td><td class='small'>・データの初期化、同時性<br>
+・データのオーバーフロー&amp;異常処置(RAM化けも含む)のガード<br>
+・データのLSB、ダイナミックレンジ、算出タイミング(遅れ)<br>
+・他のシステムまたシステム内の処理時間のI/FデータのLSB、ダイナミックレンジ算出タイミング(遅れ)、授受タイミング(遅れ)</td></tr>
+<tr><td class='small'>要求仕様プログラム</td><td class='small'>割込</td><td class='small'>・割込干渉<br>
+・データの同時性<br>
+・割込禁止時間適正(最悪値を考慮したデッドライン)<br>
+・割込時間適正(最悪値を考慮したデッドライン)</td></tr>
+<tr><td class='small'>要求仕様プログラム</td><td class='small'>その他</td><td class='small'>・仕様に無い余分な処理の有無<br>
+・要求仕様変更に伴う消し忘れ、余分な変更</td></tr>
+<tr><td class='small'>通信</td><td class='small'>ECU間通信</td><td class='small'>・各ECM間のGND電位差<br>
+・電源立上り、立下りの時間差・配線間のノイズ<br>
+・各ECU間のI/F整合(オプション、用品も含めた全ECUを考慮)<br>
+・通信途絶等の異常処理(デッドロックしないか)<br>
+・データのLSB、ダイナミックレンジ<br>
+・授受タイミング(遅れ)<br>
+・規定外の通信データ数またはデータ値を発信OR受信した時の処理(デッドロックしないか)</td></tr>
+<tr><td class='small'>通信</td><td class='small'>その他</td><td class='small'>・意地悪モード(スイッチ入力の連続操作、IG ON&lt;-&gt;OFF連続動作等)</td></tr>
+</tbody></table>
+<div class='page'></div>
+<h1>参考文献</h1>
+<div class='small'>・未然防止のための「GD 活動」と創造的<br>
+Design Review 「DRBFM手法」の手引き<br>
+　(MB推進室 清水SE著)<br>
+　SQC研究会著</div>
+<div class='small'>・トヨタ式未然防止手法GD3<br>
+～いかに問題を未然に防ぐか～<br>
+　(吉村著、日科技連)</div>
+</body></html>
